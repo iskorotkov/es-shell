@@ -1,6 +1,6 @@
 {
-    "name": "es_shell",
-    "short_name": "es_shell",
+    "name": "ES Shell",
+    "short_name": "ES Shell",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
