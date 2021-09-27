@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 
-class RuleCard extends StatelessWidget {
+class CustomCard extends StatelessWidget {
   final int index;
+  final String title;
+  final String description;
+  final List<Widget> firstColumnChildren;
+  final List<Widget>? secondColumnChildren;
 
-  const RuleCard({Key? key, required this.index}) : super(key: key);
+  const CustomCard({
+    Key? key,
+    required this.index,
+    required this.title,
+    required this.description,
+    required this.firstColumnChildren,
+    this.secondColumnChildren,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +38,11 @@ class RuleCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Name',
+                    title,
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                   Text(
-                    'Long description of what this rule does and how it does it',
+                    description,
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                 ],
@@ -43,29 +54,20 @@ class RuleCard extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text('IF'),
-                  SizedBox(height: 4),
-                  Text("var1 = value1"),
-                  Text("var1 = value1"),
-                  Text("var1 = value1"),
-                ],
+                children: firstColumnChildren,
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text('THEN'),
-                  SizedBox(height: 4),
-                  Text("var1 = value1"),
-                  Text("var1 = value1"),
-                ],
+            if (secondColumnChildren != null) ...[
+              const SizedBox(width: 16),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: secondColumnChildren!,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

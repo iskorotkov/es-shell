@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'widgets/rules/rules_view.dart';
+import 'widgets/rules_view.dart';
 
 void main() {
   runApp(const App());
