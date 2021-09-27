@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+
+import 'widgets/rules/rules_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,137 +48,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
-            _buildRulesView(context),
-            const Center(child: Text('2')),
-            const Center(child: Text('3')),
+            RulesView(),
+            Center(child: Text('2')),
+            Center(child: Text('3')),
           ],
         ),
-      ),
-    );
-  }
-
-  ExpansionTile _buildExpandableRuleCard() {
-    return const ExpansionTile(
-      title: Text('123'),
-      children: [
-        Text('456'),
-      ],
-    );
-  }
-
-  Widget _buildList(BuildContext context) {
-    return ListView.builder(
-      controller: ScrollController(),
-      itemCount: 20,
-      padding: const EdgeInsets.all(8),
-      itemBuilder: (context, index) {
-        return _buildRuleCard(context, index);
-        // return _buildExpandableRuleCard();
-      },
-    );
-  }
-
-  Card _buildRuleCard(BuildContext context, int index) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 40,
-              child: Text(
-                '#${index + 1}',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Name',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                Text(
-                  'Long description of what this rule does and how it does it',
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Row _buildRulesView(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: _buildList(context)),
-        SizedBox(
-          width: 300,
-          child: _buildToolbar(),
-        )
-      ],
-    );
-  }
-
-  Widget _buildToolbar() {
-    return Material(
-      elevation: 32,
-      child: ListView(
-        padding: const EdgeInsets.all(8),
-        children: [
-          _buildToolbarPanel(
-            context: context,
-            children: [
-              Text('Panel 1'),
-              SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Create'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Update'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Delete'),
-                ),
-              ),
-            ],
-          ),
-          _buildToolbarPanel(
-            context: context,
-            children: const [
-              Text('Panel 2'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToolbarPanel({
-    required BuildContext context,
-    required List<Widget> children,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: children,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.add),
         ),
       ),
     );
