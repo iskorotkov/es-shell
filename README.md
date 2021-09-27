@@ -1,4 +1,4 @@
-# es_shell
+# ES Shell
 
 A new Flutter project.
 
