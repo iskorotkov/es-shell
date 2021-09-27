@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'custom_view.dart';
 import 'custom_view_heading.dart';
+import 'rule_card.dart';
 
 class RulesView extends StatelessWidget {
   const RulesView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const CustomView(
+    return CustomView(
       title: 'Rule Name',
       description: 'Rule description',
-      children: [
+      children: const [
         CustomViewHeading(text: 'Conditions'),
         ConditionEditor(),
         ConditionEditor(),
@@ -19,6 +20,8 @@ class RulesView extends StatelessWidget {
         FactEditor(),
         FactEditor(),
       ],
+      itemBuilder: (_, index) => RuleCard(index: index),
+      onDelete: () {},
     );
   }
 }
