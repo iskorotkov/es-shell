@@ -17,28 +17,23 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'ES Shell'),
+      home: const HomePage(title: 'ES Shell'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   final String title;
 
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({Key? key, required this.title}) : super(key: key);
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: Text(title),
           toolbarHeight: 0,
           bottom: const TabBar(
             tabs: [
