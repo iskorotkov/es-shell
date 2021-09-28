@@ -10,15 +10,21 @@ class RulesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomView(
-      title: 'Rule Name',
+      title: 'Rule name',
       description: 'Rule description',
-      children: const [
-        CustomViewHeading(text: 'Conditions'),
-        ConditionEditor(),
-        ConditionEditor(),
-        CustomViewHeading(text: 'Facts'),
-        FactEditor(),
-        FactEditor(),
+      children: [
+        CustomViewHeading(
+          text: 'Conditions',
+          onAdd: () {},
+        ),
+        const ConditionEditor(),
+        const ConditionEditor(),
+        CustomViewHeading(
+          text: 'Facts',
+          onAdd: () {},
+        ),
+        const FactEditor(),
+        const FactEditor(),
       ],
       itemBuilder: (_, index) => RuleCard(index: index),
       onDelete: () {},

@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'widgets/domains_view.dart';
 import 'widgets/rules_view.dart';
+import 'widgets/variables_view.dart';
 
 void main() {
   runApp(const App());
@@ -46,8 +48,8 @@ class HomePage extends StatelessWidget {
         body: const TabBarView(
           children: [
             RulesView(),
-            Center(child: Text('2')),
-            Center(child: Text('3')),
+            VariablesView(),
+            DomainsView(),
           ],
         ),
         floatingActionButton: FloatingActionButton(

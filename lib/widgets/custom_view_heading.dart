@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class CustomViewHeading extends StatelessWidget {
   final String text;
+  final VoidCallback? onAdd;
 
-  const CustomViewHeading({Key? key, required this.text}) : super(key: key);
+  const CustomViewHeading({
+    Key? key,
+    required this.text,
+    this.onAdd,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +22,12 @@ class CustomViewHeading extends StatelessWidget {
               style: Theme.of(context).textTheme.headline6,
             ),
           ),
-          IconButton(
-            splashRadius: 24,
-            icon: const Icon(Icons.add),
-            onPressed: () {},
-          ),
+          if (onAdd != null)
+            IconButton(
+              splashRadius: 24,
+              icon: const Icon(Icons.add),
+              onPressed: onAdd,
+            ),
         ],
       ),
     );
