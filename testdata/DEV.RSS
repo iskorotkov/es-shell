@@ -1,0 +1,475 @@
+GOAL: result
+
+INITIAL:
+    e.tryp = "e" /* Test premises eagerly */
+    e.rigr = "m" /* Accept minimal certainty */
+    e.lstr = 80 /* Maximum string length is 80 */
+    e.deci = 0 /* No digits after the decimal */
+    e.lnum = 8 /* Length of number */
+    e.help = true
+
+    webexp = unknown
+    webarea = unknown
+    dbmsexp = unknown
+    webaf = unknown
+
+    mathslv = unknown
+    readart = unknown
+    wroteart = unknown
+    scimind = unknown
+    mlalg = unknown
+    mlaf = unknown
+
+    mobaf = unknown
+
+    gameexp = unknown
+    gameids = unknown
+    visual = unknown
+    visaf = unknown
+    engexp = unknown
+    gameaf = unknown
+
+    dtexp = unknown
+    dtfram = unknown
+    dtaf = unknown
+
+    consaf = unknown
+
+    result = unknown
+
+    CLEAR
+    LOAD DEVQF1
+    LOAD DEVRF1
+    LOAD DEVRF2
+    LOAD DEVEF1
+    PUTFORM DEVEF1
+    WAIT
+    RELEASE DEVEF1
+    CLEAR
+    DIM VARR(6)
+    USE VOPROS
+    USE OTVETS
+
+DO:
+    clear
+    if not (known ("result")) then
+        load DEVRF2
+        putform DEVRF2
+        wait
+        release DEVRF2
+    else
+        load DEVRF1
+        putform DEVRF1
+        tally DEVRF1
+        release DEVRF1
+    endif
+
+/* =========================== */
+/* ========== RULES ========== */
+/* =========================== */
+
+/* ===== Web dev ===== */
+
+/* webaf */
+RULE: R1
+    IF: (webexp = 1) and (webarea = 1)
+    THEN: webaf = 1
+    NEEDS: webexp webarea
+    CHANGES: webaf
+    REASON: У ЧЕЛОВЕКА ПРЕДРАСПОЛОЖЕННОСТЬ К ВЕБ-РАЗРАБОТКЕ, ЕСЛИ У НЕГО ЕСТЬ ОПЫТ В ФРОНТЕНДЕ
+
+RULE: R2
+    IF: (webexp = 1) and (webarea = 2) and (dbmsexp = 1)
+    THEN: webaf = 1
+    NEEDS: webexp webarea dbmsexp
+    CHANGES: webaf
+    REASON: У ЧЕЛОВЕКА ПРЕДРАСПОЛОЖЕННОСТЬ К ВЕБ-РАЗРАБОТКЕ, ЕСЛИ У НЕГО ЕСТЬ ОПЫТ В БЭКЕНДЕ И СУБД
+
+RULE: R3
+    IF: (webexp = 1) and (webarea = 2) and (dbmsexp = 2)
+    THEN: webaf = 2
+    NEEDS: webexp webarea dbmsexp
+    CHANGES: webaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ВЕБ-РАЗРАБОТКЕ, ЕСЛИ ЕСТЬ ОПЫТ РАБОТЫ С БЭКЕНДОМ, НО НЕТ С СУБД
+
+RULE: R4
+    IF: (webexp = 2)
+    THEN: webaf = 2
+    NEEDS: webexp
+    CHANGES: webaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ВЕБ-РАЗРАБОТКЕ, ЕСЛИ У НЕГО НЕТ ОПЫТА ВЕБ-РАЗРАБОТКИ
+
+/* ===== ML ===== */
+
+/* scimind */
+RULE: R5
+    IF: (mathslv = 1) and (readart = 1) and (wroteart = 1)
+    THEN: scimind = 1
+    NEEDS: mathslv readart wroteart
+    CHANGES: scimind
+    REASON: У ЧЕЛОВЕКА НАУЧНЫЙ СКЛАД УМА, ЕСЛИ ОН РЕШАЕТ ЗАДАЧИ, А ТАКЖЕ ЧИТАЕТ И ПИШЕТ НАУЧНЫЕ СТАТЬИ
+
+RULE: R6
+    IF: (mathslv = 1) and (readart = 1) and (wroteart = 2)
+    THEN: scimind = 2
+    NEEDS: mathslv readart wroteart
+    CHANGES: scimind
+    REASON: У ЧЕЛОВЕКА НЕТ НАУЧНОГО СКЛАДА УМА, ЕСЛИ ОН РЕШАЕТ ЗАДАЧИ, А ТАКЖЕ ЧИТАЕТ НАУЧНЫЕ СТАТЬИ, НО НЕ ПИШЕТ ИХ
+
+RULE: R7
+    IF: (mathslv = 1) and (readart = 2)
+    THEN: scimind = 2
+    NEEDS: mathslv readart
+    CHANGES: scimind
+    REASON: У ЧЕЛОВЕКА НЕТ НАУЧНОГО СКЛАДА УМА, ЕСЛИ ОН РЕШАЕТ ЗАДАЧИ, НО НЕ ЧИТАЕТ НАУЧНЫЕ СТАТЬИ
+
+RULE: R8
+    IF: (mathslv = 2) and (readart = 1)
+    THEN: scimind = 2
+    NEEDS: mathslv readart
+    CHANGES: scimind
+    REASON: У ЧЕЛОВЕКА НЕТ НАУЧНОГО СКЛАДА УМА, ЕСЛИ ОН НЕ РЕШАЕТ ЗАДАЧИ, НО ЧИТАЕТ НАУЧНЫЕ СТАТЬИ
+
+RULE: R9
+    IF: (mathslv = 2) and (readart = 2)
+    THEN: scimind = 2
+    NEEDS: mathslv readart
+    CHANGES: scimind
+    REASON: У ЧЕЛОВЕКА НЕТ НАУЧНОГО СКЛАДА УМА, ЕСЛИ ОН НЕ РЕШАЕТ ЗАДАЧИ И НЕ ЧИТАЕТ НАУЧНЫЕ СТАТЬИ
+
+/* mlaf */
+RULE: R10
+    IF: (scimind = 1) and (mlalg = 1)
+    THEN: mlaf = 1
+    NEEDS: scimind mlalg
+    CHANGES: mlaf
+    REASON: У ЧЕЛОВЕКА ПРЕДРАСПОЛОЖЕННОСТЬ К МО, ЕСЛИ У НЕГО НАУЧНЫЙ СКЛАД УМА И ЕСТЬ ОПЫТ В НАПИСАНИИ АЛГОРИТМОВ МО
+
+RULE: R11
+    IF: (scimind = 1) and (mlalg = 2)
+    THEN: mlaf = 2
+    NEEDS: scimind mlalg
+    CHANGES: mlaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К МО, ЕСЛИ У НЕГО НАУЧНЫЙ СКЛАД УМА, НО НЕТ ОПЫТА В НАПИСАНИИ АЛГОРИТМОВ МО
+
+RULE: R12
+    IF: (scimind = 2) and (mlalg = 1)
+    THEN: mlaf = 2
+    NEEDS: scimind mlalg
+    CHANGES: mlaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К МО, ЕСЛИ У НЕГО НЕТ НАУЧНОГО СКЛАДА УМА, НО ЕСТЬ ОПЫТ В НАПИСАНИИ АЛГОРИТМОВ МО
+
+RULE: R13
+    IF: (scimind = 2) and (mlalg = 2)
+    THEN: mlaf = 2
+    NEEDS: scimind mlalg
+    CHANGES: mlaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К МО, ЕСЛИ У НЕГО НЕТ НАУЧНОГО СКЛАДА УМА И ОПЫТА В НАПИСАНИИ АЛГОРИТМОВ МО
+
+/* ===== Mobile dev ===== */
+
+/* nothing */
+
+/* ===== Game dev ===== */
+
+/* visaf */
+
+RULE: R14
+    IF: (gameexp = 1) and (gameids = 1) and (visual = 1)
+    THEN: visaf = 1
+    NEEDS: gameexp gameids visual
+    CHANGES: visaf
+    REASON: У ЧЕЛОВЕКА ПРЕДРАСПОЛОЖЕННОСТЬ К ВИЗУАЛИЗАЦИИ, ЕСЛИ У НЕГО ЕСТЬ ОПЫТ ИГРЫ НА КОМЬЮТЕРЕ, А ТАКЖЕ ИДЕИ ПО УЛУЧШЕНИЮ ИГР И ЛЮБОВЬ К ВИЗУАЛИЗАЦИИ
+
+RULE: R15
+    IF: (gameexp = 1) and (gameids = 1) and (visual = 2)
+    THEN: visaf = 2
+    NEEDS: gameexp gameids visual
+    CHANGES: visaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ВИЗУАЛИЗАЦИИ, ЕСЛИ У НЕГО ЕСТЬ ОПЫТ ИГРЫ НА КОМЬЮТЕРЕ, А ТАКЖЕ ИДЕИ ПО УЛУЧШЕНИЮ ИГР, НО НЕТ ЛЮБВИ К ВИЗУАЛИЗАЦИИ
+
+RULE: R16
+    IF: (gameexp = 1) and (gameids = 2)
+    THEN: visaf = 2
+    NEEDS: gameexp gameids
+    CHANGES: visaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ВИЗУАЛИЗАЦИИ, ЕСЛИ У НЕГО ЕСТЬ ОПЫТ ИГРЫ НА КОМЬЮТЕРЕ, НО НЕТ ИДЕЙ ПО УЛУЧШЕНИЮ ИГР
+
+RULE: R17
+    IF: (gameexp = 2)
+    THEN: visaf = 2
+    NEEDS: gameexp
+    CHANGES: visaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ВИЗУАЛИЗАЦИИ, ЕСЛИ ОН НИКОГДА НЕ ИГРАЛ В КОМПЬЮТЕРНЫЕ ИГРЫ
+
+/* gameaf */
+
+RULE: R18
+    IF: (visaf = 1) and (engexp = 1)
+    THEN: gameaf = 1
+    NEEDS: visaf engexp
+    CHANGES: gameaf
+    REASON: У ЧЕЛОВЕКА ПРЕДРАСПОЛОЖЕННОСТЬ К РАЗРАБОТКЕ ИГР, ЕСЛИ У НЕГО ПРЕДРАСПОЛОЖЕННОСТЬ К ВИЗУАЛИЗАЦИИ И ОПЫТ РАБОТЫ С ДВИЖКОМ
+
+RULE: R19
+    IF: (visaf = 1) and (engexp = 2)
+    THEN: gameaf = 2
+    NEEDS: visaf engexp
+    CHANGES: gameaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К РАЗРАБОТКЕ ИГР, ЕСЛИ У НЕГО ПРЕДРАСПОЛОЖЕННОСТЬ К ВИЗУАЛИЗАЦИИ, НО НЕТ ОПЫТА РАБОТЫ С ДВИЖКОМ
+
+RULE: R20
+    IF: (visaf = 2) and (engexp = 1)
+    THEN: gameaf = 2
+    NEEDS: visaf engexp
+    CHANGES: gameaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К РАЗРАБОТКЕ ИГР, ЕСЛИ У НЕГО НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ВИЗУАЛИЗАЦИИ, НО ЕСТЬ ОПЫТ РАБОТЫ С ДВИЖКОМ
+
+RULE: R21
+    IF: (visaf = 2) and (engexp = 2)
+    THEN: gameaf = 2
+    NEEDS: visaf engexp
+    CHANGES: gameaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К РАЗРАБОТКЕ ИГР, ЕСЛИ У НЕГО НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ВИЗУАЛИЗАЦИИ И ОПЫТА РАБОТЫ С ДВИЖКОМ
+
+/* ===== Desktop dev ===== */
+
+/* dtaf */
+RULE: R22
+    IF: (dtexp = 1) and (dtfram = 1)
+    THEN: dtaf = 1
+    NEEDS: dtexp dtfram
+    CHANGES: dtaf
+    REASON: У ЧЕЛОВЕКА ПРЕДРАСПОЛОЖЕННОСТЬ К ДЕСКТОПНОЙ РАЗРАБОТКЕ, ЕСЛИ У НЕГО ЕСТЬ ОПЫТ РАЗРАБОТКИ И ЗНАНИЕ ФРЕЙМВОРКОВ
+
+RULE: R23
+    IF: (dtexp = 1) and (dtfram = 2)
+    THEN: dtaf = 2
+    NEEDS: dtexp dtfram
+    CHANGES: dtaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ДЕСКТОПНОЙ РАЗРАБОТКЕ, ЕСЛИ У НЕГО ЕСТЬ ОПЫТ РАЗРАБОТКИ, НО НЕТ ЗНАНИЯ ФРЕЙМВОРКОВ
+
+RULE: R24
+    IF: (dtexp = 2) and (dtfram = 1)
+    THEN: dtaf = 2
+    NEEDS: dtexp dtfram
+    CHANGES: dtaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ДЕСКТОПНОЙ РАЗРАБОТКЕ, ЕСЛИ У НЕГО НЕТ ОПЫТА РАЗРАБОТКИ, НО ЕСТЬ ЗНАНИЕ ФРЕЙМВОРКОВ
+
+RULE: R25
+    IF: (dtexp = 2) and (dtfram = 2)
+    THEN: dtaf = 2
+    NEEDS: dtexp dtfram
+    CHANGES: dtaf
+    REASON: У ЧЕЛОВЕКА НЕТ ПРЕДРАСПОЛОЖЕННОСТИ К ДЕСКТОПНОЙ РАЗРАБОТКЕ, ЕСЛИ У НЕГО НЕТ ОПЫТА РАЗРАБОТКИ И ЗНАНИЯ ФРЕЙМВОРКОВ
+
+/* ===== Console dev ===== */
+
+/* nothing */
+
+/* ===== Result ===== */
+
+/* All affilications:
+- webaf
+- mlaf
+- mobaf
+- gameaf
+- dtaf
+- consaf */
+
+/* result */
+
+RULE: R26
+    IF: (webaf = 1) and (mlaf = 1)
+    THEN: result = "ВЕБ-ИНТЕРФЕЙС ДЛЯ АЛГОРИТМОВ МАШИННОГО ОБУЧЕНИЯ"
+    NEEDS: webaf mlaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ ВЕБ + МО
+
+RULE: R27
+    IF: (webaf = 1) and (mobaf = 1)
+    THEN: result = "МОБИЛЬНЫЕ ПРИЛОЖЕНИЯ ДЛЯ ВЕБ-СЕРВИСОВ"
+    NEEDS: webaf mobaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ ВЕБ + МОБИЛЬНАЯ РАЗРАБОТКА
+
+RULE: R28
+    IF: (webaf = 1) and (gameaf = 1)
+    THEN: result = "ВЕБ-ИГРЫ ИЛИ СЕТЕВЫЕ ИГРЫ"
+    NEEDS: webaf gameaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ ВЕБ + РАЗРАБОТКА ИГР
+
+RULE: R29
+    IF: (webaf = 1) and (dtaf = 1)
+    THEN: result = "КРОССПЛАТФОРМЕННЫЕ ПРИЛОЖЕНИЯ НА ПЛАТФОРМЕ ELECTRON"
+    NEEDS: webaf dtaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ ВЕБ + РАЗРАБОТКА ДЕСКТОПНЫХ ПРИЛОЖЕНИЙ
+
+RULE: R30
+    IF: (webaf = 1) and (consaf = 1)
+    THEN: result = "КОНСОЛЬНЫЕ УТИЛИТЫ ДЛЯ РАБОТЫ С ВЕБ-СЕРВИСАМИ"
+    NEEDS: webaf consaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ ВЕБ + РАЗРАБОТКА КОНСОЛЬНЫХ ПРИЛОЖЕНИЙ
+
+RULE: R31
+    IF: (mlaf = 1) and (mobaf = 1)
+    THEN: result = "МОБИЛЬНЫЕ ПРИЛОЖЕНИЯ С АЛГОРИТМАМИ МАШИННОГО ОБУЧЕНИЯ"
+    NEEDS: mlaf mobaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ МО + МОБИЛЬНАЯ РАЗРАБОТКА
+
+RULE: R32
+    IF: (mlaf = 1) and (gameaf = 1)
+    THEN: result = "АЛГОРИТМЫ МАШИННОГО ОБУЧЕНИЯ ДЛЯ ИГР"
+    NEEDS: mlaf gameaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ МО + РАЗРАБОТКА ИГР
+
+RULE: R33
+    IF: (mlaf = 1) and (dtaf = 1)
+    THEN: result = "ДЕСКТОПНЫЕ ПРИЛОЖЕНИЯ С АЛГОРИТМАМИ МАШИННОГО ОБУЧЕНИЯ"
+    NEEDS: mlaf dtaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ МО + РАЗРАБОТКА ДЕСКТОПНЫХ ПРИЛОЖЕНИЙ
+
+RULE: R34
+    IF: (mlaf = 1) and (consaf = 1)
+    THEN: result = "КОНСОЛЬНЫЕ ПРИЛОЖЕНИЯ С АЛГОРИТМАМИ МАШИННОГО ОБУЧЕНИЯ"
+    NEEDS: mlaf consaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ МО + РАЗРАБОТКА КОНСОЛЬНЫХ ПРИЛОЖЕНИЙ
+
+RULE: R35
+    IF: (mobaf = 1) and (gameaf = 1)
+    THEN: result = "МОБИЛЬНЫЕ ИГРЫ"
+    NEEDS: mobaf gameaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ МОБИЛЬНАЯ РАЗРАБОТКА + РАЗРАБОТКА ИГР
+
+RULE: R36
+    IF: (mobaf = 1) and (dtaf = 1)
+    THEN: result = "ПРИЛОЖЕНИЯ НА ПЛАТФОРМЕ FLUTTER ИЛИ REACT/REACT NATIVE"
+    NEEDS: mobaf dtaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ МОБИЛЬНАЯ РАЗРАБОТКА + РАЗРАБОТКА ДЕСКТОПНЫХ ПРИЛОЖЕНИЙ
+
+RULE: R37
+    IF: (mobaf = 1) and (consaf = 1)
+    THEN: result = "ИНСТРУМЕНТЫ РАЗРАБОТЧИКА ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ"
+    NEEDS: mobaf consaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ МОБИЛЬНАЯ РАЗРАБОТКА + РАЗРАБОТКА КОНСОЛЬНЫХ ПРИЛОЖЕНИЙ
+
+RULE: R38
+    IF: (gameaf = 1) and (dtaf = 1)
+    THEN: result = "ДЕСКТОПНЫЕ ИГРЫ"
+    NEEDS: gameaf dtaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ РАЗРАБОТКА ИГР + РАЗРАБОТКА ДЕСКТОПНЫХ ПРИЛОЖЕНИЙ
+
+RULE: R39
+    IF: (gameaf = 1) and (consaf = 1)
+    THEN: result = "ТЕКСТОВЫЕ ИГРЫ ИЛИ КВЕСТЫ"
+    NEEDS: gameaf consaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ РАЗРАБОТКА ИГР + РАЗРАБОТКА КОНСОЛЬНЫХ ПРИЛОЖЕНИЙ
+
+RULE: R40
+    IF: (dtaf = 1) and (consaf = 1)
+    THEN: result = "ДЕСКТОПНЫЕ ПРИЛОЖЕНИЯ ДЛЯ РАБОТЫ С УТИЛИТАМИ"
+    NEEDS: dtaf consaf
+    CHANGES: result
+    REASON: ЧЕЛОВЕКУ НРАВИТСЯ РАЗРАБОТКА ДЕСКТОПНЫХ ПРИЛОЖЕНИЙ + РАЗРАБОТКА КОНСОЛЬНЫХ ПРИЛОЖЕНИЙ
+
+/* ========================== */
+/* ========== VARS ========== */
+/* ========================== */
+
+/* ===== Web dev ===== */
+VAR: webexp
+    FIND: PERFORM PROC1 USING "DEVQF1","1","webexp","2"
+    LABEL: ОПЫТ В ВЕБ-РАЗРАБОТКЕ
+
+VAR: webarea
+    FIND: PERFORM PROC1 USING "DEVQF1","2","webarea","2"
+    LABEL: ОБЛАСТЬ ВЕБ-РАЗРАБОТКИ
+
+VAR: dbmsexp
+    FIND: PERFORM PROC3 USING "DEVQF1","3","dbmsexp","2"
+    LABEL: ОПЫТ РАБОТЫ С СУБД
+
+VAR: webaf
+    LABEL: ПРЕДРАСПОЛОЖЕННОСТЬ К ВЕБУ
+
+/* ===== ML ===== */
+VAR: mathslv
+    FIND: PERFORM PROC1 USING "DEVQF1","4","mathslv","2"
+    LABEL: РЕШЕНИЕ МАТЕМАТИЧЕСКИХ ЗАДАЧ
+
+VAR: readart
+    FIND: PERFORM PROC1 USING "DEVQF1","5","readart","2"
+    LABEL: ЧТЕНИЕ НАУЧНЫХ СТАТЕЙ
+
+VAR: wroteart
+    FIND: PERFORM PROC1 USING "DEVQF1","6","wroteart","2"
+    LABEL: НАПИСАНИЕ НАУЧНЫХ СТАТЕЙ
+
+VAR: scimind
+    LABEL: НАУЧНЫЙ СКЛАД УМА
+
+VAR: mlalg
+    FIND: PERFORM PROC1 USING "DEVQF1","7","mlalg","2"
+    LABEL: РЕАЛИЗАЦИЯ АЛГОРИТМОВ МО
+
+VAR: mlaf
+    LABEL: ПРЕДРАСПОЛОЖЕННОСТЬ К МО
+
+/* ===== Mobile dev ===== */
+VAR: mobaf
+    FIND: PERFORM PROC1 USING "DEVQF1","8","mobaf","2"
+    LABEL: ПРЕДРАСПОЛОЖЕННОСТЬ К МОБИЛЬНОЙ РАЗРАБОТКЕ
+
+/* ===== Game dev ===== */
+VAR: gameexp
+    FIND: PERFORM PROC1 USING "DEVQF1","9","gameexp","2"
+    LABEL: ОПЫТ КОМЬЮТЕРНЫХ ИГР
+
+VAR: gameids
+    FIND: PERFORM PROC1 USING "DEVQF1","10","gameids","2"
+    LABEL: ИДЕИ ПО УЛУЧШЕНИЮ ИГР
+
+VAR: visual
+    FIND: PERFORM PROC1 USING "DEVQF1","11","visual","2"
+    LABEL: ОТНОШЕНИЕ В ВИЗУАЛИЗАЦИИ
+
+VAR: visaf
+    LABEL: ПРЕДРАСПОЛОЖЕННОСТЬ К ВИЗУАЛИЗАЦИИ
+
+VAR: engexp
+    FIND: PERFORM PROC1 USING "DEVQF1","12","engexp","2"
+    LABEL: ОПЫТ РАБОТЫ С ИГРОВЫМ ДВИЖКОМ
+
+VAR: gameaf
+    LABEL: ПРЕДРАСПОЛОЖЕННОСТЬ К РАЗРАБОТКЕ ИГР
+
+/* ===== Desktop dev ===== */
+VAR: dtexp
+    FIND: PERFORM PROC1 USING "DEVQF1","13","dtexp","2"
+    LABEL: ОПЫТ РАЗРАБОТКИ ДЕСКТОПНЫХ ПРИЛОЖЕНИЙ
+
+VAR: dtfram
+    FIND: PERFORM PROC1 USING "DEVQF1","14","dtfram","2"
+    LABEL: ОПЫТ РАБОТЫ С ФРЕЙМВОРКАМИ ДЛЯ РАЗРАБОТКИ ДЕСКТОПНЫХ ПРИЛОЖЕНИЙ
+
+VAR: dtaf
+    LABEL: ПРЕДРАСПОЛОЖЕННОСТЬ К РАЗРАБОТКЕ РАЗРАБОТКЕ ДЕСКТОПНЫХ ПРИЛОЖЕНИЙ
+
+/* ===== Console dev ===== */
+VAR: consaf
+    FIND: PERFORM PROC1 USING "DEVQF1","15","consaf","2"
+    LABEL: ПРЕДРАСПОЛОЖЕННОСТЬ К РАЗРАБОТКЕ КОНСОЛЬНЫХ ПРИЛОЖЕНИЙ
+
+END:
