@@ -13,6 +13,15 @@ class DomainsView extends StatelessWidget {
       title: 'Domain name',
       description: 'Domain description',
       children: [
+        const CustomViewHeading(text: 'Type'),
+        DropdownButton<String>(
+          value: 'string',
+          onChanged: (s) {},
+          items: const [
+            DropdownMenuItem(child: Text('String'), value: 'string'),
+            DropdownMenuItem(child: Text('Integer'), value: 'int'),
+          ],
+        ),
         CustomViewHeading(
           text: 'Values',
           onAdd: () {},
