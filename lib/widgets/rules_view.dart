@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../model/project.dart';
+import '../model/rule.dart';
 import 'custom_view.dart';
 import 'custom_view_heading.dart';
 import 'rule_card.dart';
@@ -9,10 +12,12 @@ class RulesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomView(
+    var project = context.watch<Project>();
+
+    return CustomView<Rule>(
       title: 'Rule name',
       description: 'Rule description',
-      children: [
+      sidebar: [
         CustomViewHeading(
           text: 'Conditions',
           onAdd: () {},
@@ -26,7 +31,11 @@ class RulesView extends StatelessWidget {
         const FactEditor(),
         const FactEditor(),
       ],
-      itemBuilder: (_, index) => RuleCard(index: index),
+      items: project.rules,
+      itemBuilder: (_, rule) => Provider<Rule>.value(
+        value: rule,
+        child: const RuleCard(),
+      ),
       onDelete: () {},
     );
   }

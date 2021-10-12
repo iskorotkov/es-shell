@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../model/domain.dart';
+import '../model/project.dart';
 import 'custom_view.dart';
 import 'custom_view_heading.dart';
 import 'domain_card.dart';
@@ -9,10 +12,12 @@ class DomainsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomView(
+    var project = context.watch<Project>();
+
+    return CustomView<Domain>(
       title: 'Domain name',
       description: 'Domain description',
-      children: [
+      sidebar: [
         const CustomViewHeading(text: 'Type'),
         DropdownButton<String>(
           value: 'string',
@@ -39,7 +44,11 @@ class DomainsView extends StatelessWidget {
           controller: TextEditingController()..text = 'four or more',
         ),
       ],
-      itemBuilder: (_, index) => DomainCard(index: index),
+      items: project.domains,
+      itemBuilder: (_, domain) => Provider<Domain>.value(
+        value: domain,
+        child: const DomainCard(),
+      ),
       onDelete: () {},
     );
   }

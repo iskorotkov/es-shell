@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../model/rule.dart';
 import 'custom_card.dart';
 
 class RuleCard extends StatelessWidget {
-  final int index;
-
-  const RuleCard({Key? key, required this.index}) : super(key: key);
+  const RuleCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var rule = context.watch<Rule>();
+
     return CustomCard(
-      index: index,
-      title: 'Some rule',
-      description: 'Long description of what this rule does and how it does it',
-      firstColumnChildren: const [
-        Text('IF'),
-        SizedBox(height: 4),
-        Text("var1 = value1"),
-        Text("var1 = value1"),
-        Text("var1 = value1"),
+      title: rule.name,
+      description: rule.description,
+      firstColumnChildren: [
+        const Text('IF'),
+        const SizedBox(height: 4),
+        ...rule.conditions
+            .map((e) => Text('${e.variable.name} = ${e.value}'))
+            .toList(),
       ],
-      secondColumnChildren: const [
-        Text('THEN'),
-        SizedBox(height: 4),
-        Text("var1 = value1"),
-        Text("var1 = value1"),
+      secondColumnChildren: [
+        const Text('THEN'),
+        const SizedBox(height: 4),
+        ...rule.results
+            .map((e) => Text('${e.variable.name} = ${e.value}'))
+            .toList(),
       ],
     );
   }

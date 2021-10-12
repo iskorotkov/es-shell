@@ -1,9 +1,15 @@
 import 'fact.dart';
 
 class Rule {
+  String name;
   String description;
-  final List<Fact> conditions = [];
-  final List<Fact> results = [];
+  List<Fact> conditions = [];
+  List<Fact> results = [];
 
-  Rule(this.description);
+  Rule({
+    required this.name,
+    required this.description,
+    required this.conditions,
+    required this.results,
+  });
 }

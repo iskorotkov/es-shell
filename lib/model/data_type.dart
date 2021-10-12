@@ -1,4 +1,4 @@
-enum Type {
+enum DataType {
   string,
   int,
 }

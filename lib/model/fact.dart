@@ -1,9 +1,11 @@
-import 'value.dart';
 import 'variable.dart';
 
 class Fact {
   Variable variable;
-  Value value;
+  Object value;
 
-  Fact(this.variable, this.value);
+  Fact({
+    required this.variable,
+    required this.value,
+  });
 }

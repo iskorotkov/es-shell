@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../model/variable.dart';
 import 'custom_card.dart';
 
 class VariableCard extends StatelessWidget {
-  final int index;
-
-  const VariableCard({Key? key, required this.index}) : super(key: key);
+  const VariableCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var variable = context.watch<Variable>();
+
     return CustomCard(
-      index: index,
-      title: 'Some rule',
-      description: 'Long description of what this variable is for',
-      firstColumnChildren: const [
-        Text('TYPE'),
-        SizedBox(height: 4),
-        Text("Integer"),
+      title: variable.name,
+      description: variable.description,
+      firstColumnChildren: [
+        const Text('TYPE'),
+        const SizedBox(height: 4),
+        Text(variable.dataType.toString()),
       ],
-      secondColumnChildren: const [
-        Text('DOMAIN'),
-        SizedBox(height: 4),
-        Text("Domain1"),
+      secondColumnChildren: [
+        const Text('DOMAIN'),
+        const SizedBox(height: 4),
+        Text(variable.domain?.name ?? '-'),
       ],
     );
   }

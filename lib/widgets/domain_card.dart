@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../model/domain.dart';
 import 'custom_card.dart';
 
 class DomainCard extends StatelessWidget {
-  final int index;
-
-  const DomainCard({Key? key, required this.index}) : super(key: key);
+  const DomainCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var domain = context.watch<Domain>();
+
     return CustomCard(
-      index: index,
-      title: 'Some domain',
-      description: 'Long description of what this domain is for',
-      firstColumnChildren: const [
-        Text('VALUES'),
-        SizedBox(height: 4),
-        Text("one"),
-        Text("two"),
-        Text("three"),
-        Text("four or more"),
+      title: domain.name,
+      description: domain.description,
+      firstColumnChildren: [
+        const Text('VALUES'),
+        const SizedBox(height: 4),
+        ...domain.values.map((e) => Text(e.toString())).toList(),
       ],
     );
   }

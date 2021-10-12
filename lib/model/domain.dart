@@ -1,9 +1,11 @@
-import 'value.dart';
-
 class Domain {
   String name;
   String description;
-  final List<Value> values = [];
+  List<Object> values = [];
 
-  Domain(this.name, this.description);
+  Domain({
+    required this.name,
+    required this.description,
+    required this.values,
+  });
 }

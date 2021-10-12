@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomCard extends StatelessWidget {
-  final int index;
   final String title;
   final String description;
   final List<Widget> firstColumnChildren;
@@ -9,7 +8,6 @@ class CustomCard extends StatelessWidget {
 
   const CustomCard({
     Key? key,
-    required this.index,
     required this.title,
     required this.description,
     required this.firstColumnChildren,
@@ -24,13 +22,6 @@ class CustomCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: 40,
-              child: Text(
-                '#${index + 1}',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            ),
             Expanded(
               flex: 3,
               child: Column(

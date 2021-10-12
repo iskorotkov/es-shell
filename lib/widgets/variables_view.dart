@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../model/data_type.dart';
+import '../model/domain.dart';
+import '../model/project.dart';
+import '../model/variable.dart';
 import 'custom_view.dart';
 import 'custom_view_heading.dart';
 import 'variable_card.dart';
@@ -9,30 +14,40 @@ class VariablesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomView(
+    var project = context.watch<Project>();
+
+    return CustomView<Variable>(
       title: 'Variable name',
       description: 'Variable description',
-      children: [
+      sidebar: [
         const CustomViewHeading(text: 'Type'),
-        DropdownButton<String>(
-          value: 'string',
+        DropdownButton<DataType>(
+          value: DataType.int,
           onChanged: (s) {},
-          items: const [
-            DropdownMenuItem(child: Text('String'), value: 'string'),
-            DropdownMenuItem(child: Text('Integer'), value: 'int'),
-          ],
+          items: DataType.values
+              .map((e) => DropdownMenuItem(
+                    child: Text(e.toString()),
+                    value: e,
+                  ))
+              .toList(),
         ),
         const CustomViewHeading(text: 'Domain'),
-        DropdownButton<String>(
-          value: 'domain1',
+        DropdownButton<Domain>(
+          value: project.domains.first,
           onChanged: (s) {},
-          items: const [
-            DropdownMenuItem(child: Text('Domain1'), value: 'domain1'),
-            DropdownMenuItem(child: Text('Domain2'), value: 'domain2'),
-          ],
+          items: project.domains
+              .map((d) => DropdownMenuItem(
+                    child: Text(d.name),
+                    value: d,
+                  ))
+              .toList(),
         ),
       ],
-      itemBuilder: (_, index) => VariableCard(index: index),
+      items: project.variables,
+      itemBuilder: (_, variable) => Provider<Variable>.value(
+        value: variable,
+        child: const VariableCard(),
+      ),
       onDelete: () {},
     );
   }

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 
-class CustomView extends StatelessWidget {
+typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
+
+class CustomView<T> extends StatelessWidget {
   final String title;
   final String description;
-  final List<Widget> children;
-  final IndexedWidgetBuilder itemBuilder;
+  final List<Widget> sidebar;
+  final List<T> items;
+  final ItemWidgetBuilder<T> itemBuilder;
   final VoidCallback onDelete;
 
   const CustomView({
     Key? key,
     required this.title,
     required this.description,
-    required this.children,
+    required this.sidebar,
+    required this.items,
     required this.itemBuilder,
     required this.onDelete,
   }) : super(key: key);
@@ -23,9 +27,9 @@ class CustomView extends StatelessWidget {
         Expanded(
           child: ListView.builder(
             controller: ScrollController(),
-            itemCount: 20,
+            itemCount: items.length,
             padding: const EdgeInsets.all(8),
-            itemBuilder: itemBuilder,
+            itemBuilder: (context, index) => itemBuilder(context, items[index]),
           ),
         ),
         SizedBox(
@@ -49,7 +53,7 @@ class CustomView extends StatelessWidget {
             controller: TextEditingController()..text = description,
           ),
           const SizedBox(height: 32),
-          ...children.map(
+          ...sidebar.map(
             (child) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: child,
