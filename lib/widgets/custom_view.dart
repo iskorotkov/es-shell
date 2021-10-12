@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
 class CustomView<T> extends StatelessWidget {
-  final String title;
-  final String description;
   final List<Widget> sidebar;
   final List<T> items;
   final ItemWidgetBuilder<T> itemBuilder;
@@ -12,8 +10,6 @@ class CustomView<T> extends StatelessWidget {
 
   const CustomView({
     Key? key,
-    required this.title,
-    required this.description,
     required this.sidebar,
     required this.items,
     required this.itemBuilder,
@@ -44,15 +40,8 @@ class CustomView<T> extends StatelessWidget {
     return Material(
       elevation: 32,
       child: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         children: [
-          TextField(
-            controller: TextEditingController()..text = title,
-          ),
-          TextField(
-            controller: TextEditingController()..text = description,
-          ),
-          const SizedBox(height: 32),
           ...sidebar.map(
             (child) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),

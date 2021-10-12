@@ -16,9 +16,13 @@ class RulesView extends StatelessWidget {
     var project = context.watch<Project>();
 
     return CustomView<Rule>(
-      title: 'Rule name',
-      description: 'Rule description',
       sidebar: [
+        TextField(
+          controller: TextEditingController()..text = 'Rule name',
+        ),
+        TextField(
+          controller: TextEditingController()..text = 'Rule description',
+        ),
         CustomViewHeading(
           text: 'Conditions',
           onAdd: () {},

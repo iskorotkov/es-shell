@@ -16,9 +16,13 @@ class DomainsView extends StatelessWidget {
     var project = context.watch<Project>();
 
     return CustomView<Domain>(
-      title: 'Domain name',
-      description: 'Domain description',
       sidebar: [
+        TextField(
+          controller: TextEditingController()..text = 'Domain name',
+        ),
+        TextField(
+          controller: TextEditingController()..text = 'Domain description',
+        ),
         const CustomViewHeading(text: 'Type'),
         DropdownButton<DataType>(
           value: DataType.int,

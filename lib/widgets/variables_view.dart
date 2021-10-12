@@ -17,9 +17,13 @@ class VariablesView extends StatelessWidget {
     var project = context.watch<Project>();
 
     return CustomView<Variable>(
-      title: 'Variable name',
-      description: 'Variable description',
       sidebar: [
+        TextField(
+          controller: TextEditingController()..text = 'Variable name',
+        ),
+        TextField(
+          controller: TextEditingController()..text = 'Variable description',
+        ),
         const CustomViewHeading(text: 'Type'),
         DropdownButton<DataType>(
           value: DataType.int,
