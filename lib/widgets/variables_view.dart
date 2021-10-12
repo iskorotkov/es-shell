@@ -26,7 +26,7 @@ class VariablesView extends StatelessWidget {
           onChanged: (s) {},
           items: DataType.values
               .map((e) => DropdownMenuItem(
-                    child: Text(e.toString()),
+                    child: Text(e.name()),
                     value: e,
                   ))
               .toList(),

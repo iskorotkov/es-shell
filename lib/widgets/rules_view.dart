@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../model/project.dart';
 import '../model/rule.dart';
+import '../model/variable.dart';
 import 'custom_view.dart';
 import 'custom_view_heading.dart';
 import 'rule_card.dart';
@@ -23,12 +24,10 @@ class RulesView extends StatelessWidget {
           onAdd: () {},
         ),
         const ConditionEditor(),
-        const ConditionEditor(),
         CustomViewHeading(
           text: 'Facts',
           onAdd: () {},
         ),
-        const FactEditor(),
         const FactEditor(),
       ],
       items: project.rules,
@@ -46,25 +45,32 @@ class ConditionEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var project = context.watch<Project>();
+    // var fact = context.watch<Fact>();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        DropdownButton<String>(
-          value: 'var1',
+        DropdownButton<Variable>(
+          value: project.variables.first,
           onChanged: (s) {},
-          items: const [
-            DropdownMenuItem(child: Text('var1'), value: 'var1'),
-            DropdownMenuItem(child: Text('var2'), value: 'var2'),
-          ],
+          items: project.variables
+              .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(e.name),
+                  ))
+              .toList(),
         ),
         const Text('='),
-        DropdownButton<String>(
-          value: 'var1',
+        DropdownButton<Variable>(
+          value: project.variables.first,
           onChanged: (s) {},
-          items: const [
-            DropdownMenuItem(child: Text('var1'), value: 'var1'),
-            DropdownMenuItem(child: Text('var2'), value: 'var2'),
-          ],
+          items: project.variables
+              .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(e.name),
+                  ))
+              .toList(),
         ),
       ],
     );
@@ -76,25 +82,32 @@ class FactEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var project = context.watch<Project>();
+    // var fact = context.watch<Fact>();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        DropdownButton<String>(
-          value: 'var1',
+        DropdownButton<Variable>(
+          value: project.variables.first,
           onChanged: (s) {},
-          items: const [
-            DropdownMenuItem(child: Text('var1'), value: 'var1'),
-            DropdownMenuItem(child: Text('var2'), value: 'var2'),
-          ],
+          items: project.variables
+              .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(e.name),
+                  ))
+              .toList(),
         ),
         const Text('='),
-        DropdownButton<String>(
-          value: 'var1',
+        DropdownButton<Variable>(
+          value: project.variables.first,
           onChanged: (s) {},
-          items: const [
-            DropdownMenuItem(child: Text('var1'), value: 'var1'),
-            DropdownMenuItem(child: Text('var2'), value: 'var2'),
-          ],
+          items: project.variables
+              .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(e.name),
+                  ))
+              .toList(),
         ),
       ],
     );

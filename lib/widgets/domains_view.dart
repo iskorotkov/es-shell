@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../model/data_type.dart';
 import '../model/domain.dart';
 import '../model/project.dart';
 import 'custom_view.dart';
@@ -19,13 +20,15 @@ class DomainsView extends StatelessWidget {
       description: 'Domain description',
       sidebar: [
         const CustomViewHeading(text: 'Type'),
-        DropdownButton<String>(
-          value: 'string',
+        DropdownButton<DataType>(
+          value: DataType.int,
           onChanged: (s) {},
-          items: const [
-            DropdownMenuItem(child: Text('String'), value: 'string'),
-            DropdownMenuItem(child: Text('Integer'), value: 'int'),
-          ],
+          items: DataType.values
+              .map((e) => DropdownMenuItem(
+            child: Text(e.name()),
+            value: e,
+          ))
+              .toList(),
         ),
         CustomViewHeading(
           text: 'Values',

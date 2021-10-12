@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../model/data_type.dart';
 import '../model/variable.dart';
 import 'custom_card.dart';
 
@@ -17,7 +18,7 @@ class VariableCard extends StatelessWidget {
       firstColumnChildren: [
         const Text('TYPE'),
         const SizedBox(height: 4),
-        Text(variable.dataType.toString()),
+        Text(variable.dataType.name()),
       ],
       secondColumnChildren: [
         const Text('DOMAIN'),

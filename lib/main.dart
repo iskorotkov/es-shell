@@ -24,6 +24,7 @@ class App extends StatelessWidget {
       Domain(
         name: 'Num domain',
         description: 'Limited values',
+        dataType: DataType.int,
         values: [1, 2, 3, 7],
       )
     ];
