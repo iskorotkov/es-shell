@@ -112,7 +112,6 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(title),
-          toolbarHeight: 0,
           bottom: const TabBar(
             tabs: [
               Tab(text: 'Rules'),
