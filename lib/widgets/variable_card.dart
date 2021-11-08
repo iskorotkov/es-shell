@@ -6,7 +6,9 @@ import '../model/variable.dart';
 import 'custom_card.dart';
 
 class VariableCard extends StatelessWidget {
-  const VariableCard({Key? key}) : super(key: key);
+  final VoidCallback? onTap;
+
+  const VariableCard({Key? key, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class VariableCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(variable.domain?.name ?? '-'),
       ],
+      onTap: onTap,
     );
   }
 }

@@ -6,7 +6,9 @@ import '../model/domain.dart';
 import 'custom_card.dart';
 
 class DomainCard extends StatelessWidget {
-  const DomainCard({Key? key}) : super(key: key);
+  final VoidCallback? onTap;
+
+  const DomainCard({Key? key, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class DomainCard extends StatelessWidget {
         const SizedBox(height: 4),
         ...domain.values.map((e) => Text(e.toString())).toList(),
       ],
+      onTap: onTap,
     );
   }
 }

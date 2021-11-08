@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import 'variable.dart';
 
-class Fact {
+class Fact with ChangeNotifier {
   Variable variable;
   Object value;
 

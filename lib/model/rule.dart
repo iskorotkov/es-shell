@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import 'fact.dart';
 
-class Rule {
+class Rule with ChangeNotifier {
   String name;
   String description;
   List<Fact> conditions = [];

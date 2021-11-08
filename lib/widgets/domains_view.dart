@@ -8,55 +8,94 @@ import 'custom_view.dart';
 import 'custom_view_heading.dart';
 import 'domain_card.dart';
 
-class DomainsView extends StatelessWidget {
+class DomainsView extends StatefulWidget {
   const DomainsView({Key? key}) : super(key: key);
+
+  @override
+  State<DomainsView> createState() => _DomainsViewState();
+}
+
+class _DomainsViewState extends State<DomainsView> {
+  Domain? _selected;
 
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
 
     return CustomView<Domain>(
-      sidebar: [
-        TextField(
-          controller: TextEditingController()..text = 'Domain name',
-        ),
-        TextField(
-          controller: TextEditingController()..text = 'Domain description',
-        ),
-        const CustomViewHeading(text: 'Type'),
-        DropdownButton<DataType>(
-          value: DataType.int,
-          onChanged: (s) {},
-          items: DataType.values
-              .map((e) => DropdownMenuItem(
-            child: Text(e.name()),
-            value: e,
-          ))
-              .toList(),
-        ),
-        CustomViewHeading(
-          text: 'Values',
-          onAdd: () {},
-        ),
-        TextField(
-          controller: TextEditingController()..text = 'one',
-        ),
-        TextField(
-          controller: TextEditingController()..text = 'two',
-        ),
-        TextField(
-          controller: TextEditingController()..text = 'three',
-        ),
-        TextField(
-          controller: TextEditingController()..text = 'four or more',
-        ),
-      ],
+      sidebar: _selected != null ? _buildSidebar() : [],
       items: project.domains,
-      itemBuilder: (_, domain) => Provider<Domain>.value(
+      itemBuilder: (_, domain) => ChangeNotifierProvider<Domain>.value(
         value: domain,
-        child: const DomainCard(),
+        child: DomainCard(
+          onTap: () {
+            setState(() {
+              _selected = domain;
+            });
+          },
+        ),
       ),
-      onDelete: () {},
+      onDelete: () {
+        setState(() {
+          project.domains.remove(_selected);
+          _selected = null;
+        });
+      },
     );
+  }
+
+  List<Widget> _buildSidebar() {
+    return [
+      TextField(
+        controller: TextEditingController()..text = _selected!.name,
+        onSubmitted: (value) {
+          setState(() {
+            _selected!.name = value;
+          });
+        },
+      ),
+      TextField(
+        controller: TextEditingController()..text = _selected!.description,
+        onSubmitted: (value) {
+          setState(() {
+            _selected!.description = value;
+          });
+        },
+      ),
+      const CustomViewHeading(text: 'Type'),
+      DropdownButton<DataType>(
+        value: _selected!.dataType,
+        onChanged: (value) {
+          setState(() {
+            _selected!.dataType = value ?? _selected!.dataType;
+          });
+        },
+        items: DataType.values
+            .map((e) => DropdownMenuItem(
+                  child: Text(e.name()),
+                  value: e,
+                ))
+            .toList(),
+      ),
+      CustomViewHeading(
+        text: 'Values',
+        onAdd: () {
+          setState(() {
+            _selected!.values.add('');
+          });
+        },
+      ),
+      for (var i = 0; i < _selected!.values.length; i++)
+        TextField(
+          controller: TextEditingController()
+            ..text = _selected!.values[i].toString(),
+          onSubmitted: (value) {
+            setState(() {
+              _selected!.values[i] = value;
+              _selected!.values = _selected!.values;
+            });
+          },
+        )
+    ];
   }
 }

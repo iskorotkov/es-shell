@@ -28,10 +28,11 @@ class CustomView<T> extends StatelessWidget {
             itemBuilder: (context, index) => itemBuilder(context, items[index]),
           ),
         ),
-        SizedBox(
-          width: 300,
-          child: _buildToolbar(context),
-        )
+        if (sidebar.isNotEmpty)
+          SizedBox(
+            width: 300,
+            child: _buildToolbar(context),
+          )
       ],
     );
   }

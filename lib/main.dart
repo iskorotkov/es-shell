@@ -93,7 +93,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Provider.value(
+      home: ChangeNotifierProvider<Project>.value(
         value: project,
         child: const HomePage(title: 'ES Shell'),
       ),
@@ -121,16 +121,12 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
             RulesView(),
             VariablesView(),
             DomainsView(),
           ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(Icons.add),
         ),
       ),
     );

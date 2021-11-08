@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 import 'domain.dart';
 import 'data_type.dart';
 
-class Variable {
+class Variable with ChangeNotifier {
   String name;
   String description;
   DataType dataType;

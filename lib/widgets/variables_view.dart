@@ -9,50 +9,96 @@ import 'custom_view.dart';
 import 'custom_view_heading.dart';
 import 'variable_card.dart';
 
-class VariablesView extends StatelessWidget {
+class VariablesView extends StatefulWidget {
   const VariablesView({Key? key}) : super(key: key);
+
+  @override
+  State<VariablesView> createState() => _VariablesViewState();
+}
+
+class _VariablesViewState extends State<VariablesView> {
+  Variable? _selected;
 
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
 
     return CustomView<Variable>(
-      sidebar: [
-        TextField(
-          controller: TextEditingController()..text = 'Variable name',
+      sidebar: _selected != null ? _buildSidebar(project) : [],
+      items: project.variables,
+      itemBuilder: (_, variable) => ChangeNotifierProvider<Variable>.value(
+        value: variable,
+        child: VariableCard(
+          onTap: () {
+            setState(() {
+              _selected = variable;
+            });
+          },
         ),
-        TextField(
-          controller: TextEditingController()..text = 'Variable description',
-        ),
-        const CustomViewHeading(text: 'Type'),
-        DropdownButton<DataType>(
-          value: DataType.int,
-          onChanged: (s) {},
-          items: DataType.values
-              .map((e) => DropdownMenuItem(
-                    child: Text(e.name()),
-                    value: e,
-                  ))
-              .toList(),
-        ),
-        const CustomViewHeading(text: 'Domain'),
-        DropdownButton<Domain>(
-          value: project.domains.first,
-          onChanged: (s) {},
-          items: project.domains
+      ),
+      onDelete: () {
+        setState(() {
+          project.variables.remove(_selected);
+          _selected = null;
+        });
+      },
+    );
+  }
+
+  List<Widget> _buildSidebar(Project project) {
+    return [
+      TextField(
+        controller: TextEditingController()..text = _selected!.name,
+        onSubmitted: (value) {
+          setState(() {
+            _selected!.name = value;
+          });
+        },
+      ),
+      TextField(
+        controller: TextEditingController()..text = _selected!.description,
+        onSubmitted: (value) {
+          setState(() {
+            _selected!.description = value;
+          });
+        },
+      ),
+      const CustomViewHeading(text: 'Type'),
+      DropdownButton<DataType>(
+        value: _selected!.dataType,
+        onChanged: (value) {
+          setState(() {
+            _selected!.dataType = value ?? _selected!.dataType;
+          });
+        },
+        items: DataType.values
+            .map((e) => DropdownMenuItem(
+                  child: Text(e.name()),
+                  value: e,
+                ))
+            .toList(),
+      ),
+      const CustomViewHeading(text: 'Domain'),
+      DropdownButton<Domain>(
+        value: _selected!.domain,
+        onChanged: (value) {
+          setState(() {
+            _selected!.domain = value;
+          });
+        },
+        items: [
+          ...project.domains
               .map((d) => DropdownMenuItem(
                     child: Text(d.name),
                     value: d,
                   ))
               .toList(),
-        ),
-      ],
-      items: project.variables,
-      itemBuilder: (_, variable) => Provider<Variable>.value(
-        value: variable,
-        child: const VariableCard(),
+          const DropdownMenuItem(
+            child: Text('<none>'),
+            value: null,
+          ),
+        ],
       ),
-      onDelete: () {},
-    );
+    ];
   }
 }

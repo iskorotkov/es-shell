@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
+
 import 'domain.dart';
 import 'rule.dart';
 import 'variable.dart';
 
-class Project {
+class Project with ChangeNotifier {
   List<Domain> domains = [];
   List<Variable> variables = [];
   List<Rule> rules = [];

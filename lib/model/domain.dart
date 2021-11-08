@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import 'data_type.dart';
 
-class Domain {
+class Domain with ChangeNotifier {
   String name;
   String description;
   DataType dataType;

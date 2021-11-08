@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../model/fact.dart';
 import '../model/project.dart';
 import '../model/rule.dart';
 import '../model/variable.dart';
@@ -8,39 +9,93 @@ import 'custom_view.dart';
 import 'custom_view_heading.dart';
 import 'rule_card.dart';
 
-class RulesView extends StatelessWidget {
+class RulesView extends StatefulWidget {
   const RulesView({Key? key}) : super(key: key);
+
+  @override
+  State<RulesView> createState() => _RulesViewState();
+}
+
+class _RulesViewState extends State<RulesView> {
+  Rule? _selected;
 
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
 
     return CustomView<Rule>(
-      sidebar: [
-        TextField(
-          controller: TextEditingController()..text = 'Rule name',
-        ),
-        TextField(
-          controller: TextEditingController()..text = 'Rule description',
-        ),
-        CustomViewHeading(
-          text: 'Conditions',
-          onAdd: () {},
-        ),
-        const ConditionEditor(),
-        CustomViewHeading(
-          text: 'Facts',
-          onAdd: () {},
-        ),
-        const FactEditor(),
-      ],
+      sidebar: _selected != null ? _buildSidebar(project) : [],
       items: project.rules,
-      itemBuilder: (_, rule) => Provider<Rule>.value(
+      itemBuilder: (_, rule) => ChangeNotifierProvider<Rule>.value(
         value: rule,
-        child: const RuleCard(),
+        child: RuleCard(
+          onTap: () {
+            setState(() {
+              _selected = rule;
+            });
+          },
+        ),
       ),
-      onDelete: () {},
+      onDelete: () {
+        setState(() {
+          project.rules.remove(_selected);
+          _selected = null;
+        });
+      },
     );
+  }
+
+  List<Widget> _buildSidebar(Project project) {
+    return [
+      TextField(
+        controller: TextEditingController()..text = _selected!.name,
+        onSubmitted: (value) {
+          setState(() {
+            _selected!.name = value;
+          });
+        },
+      ),
+      TextField(
+        controller: TextEditingController()..text = _selected!.description,
+        onSubmitted: (value) {
+          setState(() {
+            _selected!.description = value;
+          });
+        },
+      ),
+      CustomViewHeading(
+        text: 'Conditions',
+        onAdd: () {
+          setState(() {
+            _selected!.conditions.add(Fact(
+              variable: project.variables.first,
+              value: '',
+            ));
+          });
+        },
+      ),
+      for (var condition in _selected!.conditions)
+        ChangeNotifierProvider<Fact>.value(
+          value: condition,
+          child: const ConditionEditor(),
+        ),
+      CustomViewHeading(
+        text: 'Results',
+        onAdd: () {
+          setState(() {
+            _selected!.results.add(Fact(
+              variable: project.variables.first,
+              value: '',
+            ));
+          });
+        },
+      ),
+      for (var result in _selected!.results)
+        ChangeNotifierProvider<Fact>.value(
+          value: result,
+          child: const ResultEditor(),
+        ),
+    ];
   }
 }
 
@@ -81,8 +136,8 @@ class ConditionEditor extends StatelessWidget {
   }
 }
 
-class FactEditor extends StatelessWidget {
-  const FactEditor({Key? key}) : super(key: key);
+class ResultEditor extends StatelessWidget {
+  const ResultEditor({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

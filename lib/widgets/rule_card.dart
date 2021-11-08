@@ -5,7 +5,9 @@ import '../model/rule.dart';
 import 'custom_card.dart';
 
 class RuleCard extends StatelessWidget {
-  const RuleCard({Key? key}) : super(key: key);
+  final VoidCallback? onTap;
+
+  const RuleCard({Key? key, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class RuleCard extends StatelessWidget {
             .map((e) => Text('${e.variable.name} = ${e.value}'))
             .toList(),
       ],
+      onTap: onTap,
     );
   }
 }
