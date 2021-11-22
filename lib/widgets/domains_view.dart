@@ -35,6 +35,7 @@ class _DomainsViewState extends State<DomainsView> {
           },
         ),
       ),
+      onCreate: () {},
       onDelete: () {
         setState(() {
           project.domains.remove(_selected);

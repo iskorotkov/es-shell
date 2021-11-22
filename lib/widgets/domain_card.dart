@@ -23,7 +23,7 @@ class DomainCard extends StatelessWidget {
         Text(domain.dataType.name()),
       ],
       secondColumnChildren: [
-        const Text('DOMAIN'),
+        const Text('VALUES'),
         const SizedBox(height: 4),
         ...domain.values.map((e) => Text(e.toString())).toList(),
       ],

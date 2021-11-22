@@ -36,6 +36,7 @@ class _VariablesViewState extends State<VariablesView> {
           },
         ),
       ),
+      onCreate: () {},
       onDelete: () {
         setState(() {
           project.variables.remove(_selected);

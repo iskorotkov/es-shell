@@ -6,6 +6,7 @@ class CustomView<T> extends StatelessWidget {
   final List<Widget> sidebar;
   final List<T> items;
   final ItemWidgetBuilder<T> itemBuilder;
+  final VoidCallback onCreate;
   final VoidCallback onDelete;
 
   const CustomView({
@@ -13,6 +14,7 @@ class CustomView<T> extends StatelessWidget {
     required this.sidebar,
     required this.items,
     required this.itemBuilder,
+    required this.onCreate,
     required this.onDelete,
   }) : super(key: key);
 
@@ -21,11 +23,18 @@ class CustomView<T> extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: ListView.builder(
-            controller: ScrollController(),
-            itemCount: items.length,
-            padding: const EdgeInsets.all(8),
-            itemBuilder: (context, index) => itemBuilder(context, items[index]),
+          child: Scaffold(
+            body: ListView.builder(
+              controller: ScrollController(),
+              itemCount: items.length,
+              padding: const EdgeInsets.all(8),
+              itemBuilder: (context, index) =>
+                  itemBuilder(context, items[index]),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: onCreate,
+              child: const Icon(Icons.add),
+            ),
           ),
         ),
         if (sidebar.isNotEmpty)

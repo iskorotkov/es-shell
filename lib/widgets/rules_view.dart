@@ -36,6 +36,7 @@ class _RulesViewState extends State<RulesView> {
           },
         ),
       ),
+      onCreate: () {},
       onDelete: () {
         setState(() {
           project.rules.remove(_selected);
