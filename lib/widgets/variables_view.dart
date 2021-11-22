@@ -12,7 +12,10 @@ import 'custom_view_heading.dart';
 import 'variable_card.dart';
 
 class VariablesView extends StatefulWidget {
-  const VariablesView({Key? key}) : super(key: key);
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  VariablesView({Key? key}) : super(key: key);
 
   @override
   State<VariablesView> createState() => _VariablesViewState();
@@ -34,6 +37,8 @@ class _VariablesViewState extends State<VariablesView> {
           onTap: () {
             setState(() {
               _selected = variable;
+              widget.nameController.text = variable.name;
+              widget.descriptionController.text = variable.description;
             });
           },
         ),
@@ -59,16 +64,16 @@ class _VariablesViewState extends State<VariablesView> {
   List<Widget> _buildSidebar(Project project) {
     return [
       TextField(
-        controller: TextEditingController()..text = _selected!.name,
-        onSubmitted: (value) {
+        controller: widget.nameController,
+        onChanged: (value) {
           setState(() {
             _selected!.name = value;
           });
         },
       ),
       TextField(
-        controller: TextEditingController()..text = _selected!.description,
-        onSubmitted: (value) {
+        controller: widget.descriptionController,
+        onChanged: (value) {
           setState(() {
             _selected!.description = value;
           });

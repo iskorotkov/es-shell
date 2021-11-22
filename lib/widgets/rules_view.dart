@@ -12,7 +12,10 @@ import 'custom_view_heading.dart';
 import 'rule_card.dart';
 
 class RulesView extends StatefulWidget {
-  const RulesView({Key? key}) : super(key: key);
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  RulesView({Key? key}) : super(key: key);
 
   @override
   State<RulesView> createState() => _RulesViewState();
@@ -34,6 +37,8 @@ class _RulesViewState extends State<RulesView> {
           onTap: () {
             setState(() {
               _selected = rule;
+              widget.nameController.text = rule.name;
+              widget.descriptionController.text = rule.description;
             });
           },
         ),
@@ -60,16 +65,16 @@ class _RulesViewState extends State<RulesView> {
   List<Widget> _buildSidebar(Project project) {
     return [
       TextField(
-        controller: TextEditingController()..text = _selected!.name,
-        onSubmitted: (value) {
+        controller: widget.nameController,
+        onChanged: (value) {
           setState(() {
             _selected!.name = value;
           });
         },
       ),
       TextField(
-        controller: TextEditingController()..text = _selected!.description,
-        onSubmitted: (value) {
+        controller: widget.descriptionController,
+        onChanged: (value) {
           setState(() {
             _selected!.description = value;
           });
@@ -117,7 +122,6 @@ class ConditionEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
-    // var fact = context.watch<Fact>();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
