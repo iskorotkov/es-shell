@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +38,16 @@ class _RulesViewState extends State<RulesView> {
           },
         ),
       ),
-      onCreate: () {},
+      onCreate: () {
+        setState(() {
+          project.rules.add(Rule(
+            name: 'New rule #${Random().nextInt(1000)}',
+            description: '',
+            conditions: [],
+            results: [],
+          ));
+        });
+      },
       onDelete: () {
         setState(() {
           project.rules.remove(_selected);

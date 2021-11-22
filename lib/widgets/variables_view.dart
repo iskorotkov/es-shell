@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +38,15 @@ class _VariablesViewState extends State<VariablesView> {
           },
         ),
       ),
-      onCreate: () {},
+      onCreate: () {
+        setState(() {
+          project.variables.add(Variable(
+            name: 'New variable #${Random().nextInt(1000)}',
+            description: '',
+            dataType: DataType.int,
+          ));
+        });
+      },
       onDelete: () {
         setState(() {
           project.variables.remove(_selected);

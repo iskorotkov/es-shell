@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +37,16 @@ class _DomainsViewState extends State<DomainsView> {
           },
         ),
       ),
-      onCreate: () {},
+      onCreate: () {
+        setState(() {
+          project.domains.add(Domain(
+            name: 'New domain #${Random().nextInt(1000)}',
+            description: '',
+            dataType: DataType.int,
+            values: [],
+          ));
+        });
+      },
       onDelete: () {
         setState(() {
           project.domains.remove(_selected);
