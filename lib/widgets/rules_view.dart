@@ -23,6 +23,9 @@ class RulesView extends StatefulWidget {
 
 class _RulesViewState extends State<RulesView> {
   Rule? _selected;
+  List<TextEditingController> _conditionsControllers =
+      <TextEditingController>[];
+  List<TextEditingController> _resultsControllers = <TextEditingController>[];
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +42,30 @@ class _RulesViewState extends State<RulesView> {
               _selected = rule;
               widget.nameController.text = rule.name;
               widget.descriptionController.text = rule.description;
+
+              _conditionsControllers = List.filled(
+                rule.conditions.length,
+                TextEditingController(),
+                growable: true,
+              );
+
+              _conditionsControllers.setAll(
+                0,
+                rule.conditions.map(
+                    (e) => TextEditingController()..text = e.value.toString()),
+              );
+
+              _resultsControllers = List.filled(
+                rule.conditions.length,
+                TextEditingController(),
+                growable: true,
+              );
+
+              _resultsControllers.setAll(
+                0,
+                rule.conditions.map(
+                    (e) => TextEditingController()..text = e.value.toString()),
+              );
             });
           },
         ),
@@ -88,13 +115,45 @@ class _RulesViewState extends State<RulesView> {
               variable: project.variables.first,
               value: '',
             ));
+
+            _conditionsControllers.add(TextEditingController());
           });
         },
       ),
-      for (var condition in _selected!.conditions)
+      for (var i = 0; i < _selected!.conditions.length; i++)
         ChangeNotifierProvider<Fact>.value(
-          value: condition,
-          child: const ConditionEditor(),
+          value: _selected!.conditions[i],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              DropdownButton<Variable>(
+                value: _selected!.conditions[i].variable,
+                onChanged: (value) {
+                  setState(() {
+                    _selected!.conditions[i].variable =
+                        value ?? _selected!.conditions[i].variable;
+                  });
+                },
+                items: project.variables
+                    .map((e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.name),
+                        ))
+                    .toList(),
+              ),
+              const Text('='),
+              Expanded(
+                child: TextField(
+                  controller: _conditionsControllers[i],
+                  onChanged: (value) {
+                    setState(() {
+                      _selected!.conditions[i].value = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       CustomViewHeading(
         text: 'Results',
@@ -104,87 +163,46 @@ class _RulesViewState extends State<RulesView> {
               variable: project.variables.first,
               value: '',
             ));
+
+            _resultsControllers.add(TextEditingController());
           });
         },
       ),
-      for (var result in _selected!.results)
+      for (var i = 0; i < _selected!.results.length; i++)
         ChangeNotifierProvider<Fact>.value(
-          value: result,
-          child: const ResultEditor(),
+          value: _selected!.results[i],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              DropdownButton<Variable>(
+                value: _selected!.results[i].variable,
+                onChanged: (value) {
+                  setState(() {
+                    _selected!.results[i].variable =
+                        value ?? _selected!.results[i].variable;
+                  });
+                },
+                items: project.variables
+                    .map((e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.name),
+                        ))
+                    .toList(),
+              ),
+              const Text('='),
+              Expanded(
+                child: TextField(
+                  controller: _resultsControllers[i],
+                  onChanged: (value) {
+                    setState(() {
+                      _selected!.results[i].value = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
     ];
-  }
-}
-
-class ConditionEditor extends StatelessWidget {
-  const ConditionEditor({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var project = context.watch<Project>();
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        DropdownButton<Variable>(
-          value: project.variables.first,
-          onChanged: (s) {},
-          items: project.variables
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e.name),
-                  ))
-              .toList(),
-        ),
-        const Text('='),
-        DropdownButton<Variable>(
-          value: project.variables.first,
-          onChanged: (s) {},
-          items: project.variables
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e.name),
-                  ))
-              .toList(),
-        ),
-      ],
-    );
-  }
-}
-
-class ResultEditor extends StatelessWidget {
-  const ResultEditor({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var project = context.watch<Project>();
-    // var fact = context.watch<Fact>();
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        DropdownButton<Variable>(
-          value: project.variables.first,
-          onChanged: (s) {},
-          items: project.variables
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e.name),
-                  ))
-              .toList(),
-        ),
-        const Text('='),
-        DropdownButton<Variable>(
-          value: project.variables.first,
-          onChanged: (s) {},
-          items: project.variables
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e.name),
-                  ))
-              .toList(),
-        ),
-      ],
-    );
   }
 }

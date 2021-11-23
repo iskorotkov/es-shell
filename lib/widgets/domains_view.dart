@@ -11,8 +11,8 @@ import 'custom_view_heading.dart';
 import 'domain_card.dart';
 
 class DomainsView extends StatefulWidget {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   DomainsView({Key? key}) : super(key: key);
 
@@ -22,7 +22,7 @@ class DomainsView extends StatefulWidget {
 
 class _DomainsViewState extends State<DomainsView> {
   Domain? _selected;
-  List<TextEditingController> valuesControllers = <TextEditingController>[];
+  List<TextEditingController> _valuesControllers = <TextEditingController>[];
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +37,16 @@ class _DomainsViewState extends State<DomainsView> {
           onTap: () {
             setState(() {
               _selected = domain;
-              widget.nameController.text = domain.name;
-              widget.descriptionController.text = domain.description;
+              widget._nameController.text = domain.name;
+              widget._descriptionController.text = domain.description;
 
-              valuesControllers = List.filled(
+              _valuesControllers = List.filled(
                 domain.values.length,
                 TextEditingController(),
                 growable: true,
               );
 
-              valuesControllers.setAll(
+              _valuesControllers.setAll(
                 0,
                 domain.values
                     .map((e) => TextEditingController()..text = e.toString()),
@@ -77,7 +77,7 @@ class _DomainsViewState extends State<DomainsView> {
   List<Widget> _buildSidebar() {
     return [
       TextField(
-        controller: widget.nameController,
+        controller: widget._nameController,
         onChanged: (value) {
           setState(() {
             _selected!.name = value;
@@ -85,7 +85,7 @@ class _DomainsViewState extends State<DomainsView> {
         },
       ),
       TextField(
-        controller: widget.descriptionController,
+        controller: widget._descriptionController,
         onChanged: (value) {
           setState(() {
             _selected!.description = value;
@@ -112,13 +112,13 @@ class _DomainsViewState extends State<DomainsView> {
         onAdd: () {
           setState(() {
             _selected!.values.add('');
-            valuesControllers.add(TextEditingController());
+            _valuesControllers.add(TextEditingController());
           });
         },
       ),
       for (var i = 0; i < _selected!.values.length; i++)
         TextField(
-          controller: valuesControllers[i],
+          controller: _valuesControllers[i],
           onChanged: (value) {
             setState(() {
               _selected!.values[i] = value;
