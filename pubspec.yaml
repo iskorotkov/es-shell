@@ -38,6 +38,7 @@ dependencies:
   json_annotation: ^4.3.0
   equatable: ^2.0.3
   uuid: ^3.0.5
+  flutter_treeview: ^1.0.6+1
 
 dev_dependencies:
   flutter_test:

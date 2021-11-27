@@ -5,15 +5,11 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
-import 'model/data_type.dart';
-import 'model/domain.dart';
-import 'model/fact.dart';
 import 'model/project.dart';
-import 'model/rule.dart';
-import 'model/variable.dart';
+import 'sample_project.dart';
 import 'widgets/domains_view.dart';
+import 'widgets/infer_view.dart';
 import 'widgets/rules_view.dart';
 import 'widgets/variables_view.dart';
 
@@ -47,90 +43,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Project _project = _createSampleProject();
-
-  static Project _createSampleProject() {
-    var domains = <Domain>[
-      Domain(
-        uuid: const Uuid().v4(),
-        name: 'Num domain',
-        description: 'Limited values',
-        dataType: DataType.int,
-        values: const [1, 2, 3, 7],
-      )
-    ];
-
-    var variables = <Variable>[
-      Variable(
-        uuid: const Uuid().v4(),
-        name: 'Name1',
-        description: 'Desc1',
-        dataType: DataType.int,
-      ),
-      Variable(
-        uuid: const Uuid().v4(),
-        name: 'Name2',
-        description: 'Desc2',
-        dataType: DataType.string,
-      ),
-      Variable(
-        uuid: const Uuid().v4(),
-        name: 'Name3',
-        description: 'Desc3',
-        dataType: DataType.int,
-        domain: domains.first,
-      ),
-    ];
-
-    var project = Project(
-      uuid: const Uuid().v4(),
-      domains: domains,
-      variables: variables,
-      rules: [
-        Rule(
-          uuid: const Uuid().v4(),
-          name: 'Rule1',
-          description: 'Desc1',
-          conditions: [
-            Fact(
-              uuid: const Uuid().v4(),
-              variable: variables[0],
-              value: 1,
-            )
-          ],
-          results: [
-            Fact(
-              uuid: const Uuid().v4(),
-              variable: variables[1],
-              value: 'hello',
-            )
-          ],
-        ),
-        Rule(
-          uuid: const Uuid().v4(),
-          name: 'Rule2',
-          description: 'Desc2',
-          conditions: [
-            Fact(
-              uuid: const Uuid().v4(),
-              variable: variables[1],
-              value: 'hello',
-            )
-          ],
-          results: [
-            Fact(
-              uuid: const Uuid().v4(),
-              variable: variables[2],
-              value: 7,
-            )
-          ],
-        ),
-      ],
-      target: variables.last,
-    );
-
-    return project;
-  }
+  Project _project = createSampleProject();
 
   @override
   Widget build(BuildContext context) {
@@ -210,6 +123,15 @@ class _HomePageState extends State<HomePage> {
                 icon: const Icon(Icons.fast_forward),
                 onPressed: () {
                   log('running infer engine');
+
+                  Navigator.push(context, MaterialPageRoute<void>(
+                    builder: (context) {
+                      return ChangeNotifierProvider<Project>.value(
+                        value: _project,
+                        child: const InferView(),
+                      );
+                    },
+                  ));
                 },
               ),
             ],
