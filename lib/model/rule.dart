@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'fact.dart';
 
+part 'rule.g.dart';
+
+@JsonSerializable()
 class Rule with ChangeNotifier {
   String name;
   String description;
-  List<Fact> conditions = [];
-  List<Fact> results = [];
+  List<Fact> conditions;
+  List<Fact> results;
 
   Rule({
     required this.name,
@@ -14,4 +18,8 @@ class Rule with ChangeNotifier {
     required this.conditions,
     required this.results,
   });
+
+  factory Rule.fromJson(Map<String, dynamic> json) => _$RuleFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RuleToJson(this);
 }

@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -97,6 +102,7 @@ class App extends StatelessWidget {
         value: project,
         child: const HomePage(title: 'ES Shell'),
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -108,6 +114,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var project = context.watch<Project>();
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -120,6 +128,69 @@ class HomePage extends StatelessWidget {
               Tab(text: 'Domains'),
             ],
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.save_alt),
+              onPressed: () {
+                FilePicker.platform.saveFile(
+                  fileName: 'project.es',
+                  type: FileType.custom,
+                  allowedExtensions: ['es', 'json'],
+                ).then((value) {
+                  if (value == null) {
+                    log('no file selected');
+                    return;
+                  }
+
+                  log('saving to $value');
+
+                  try {
+                    var file = File(value);
+                    var json = jsonEncode(project.toJson());
+
+                    file.writeAsString(json);
+                  } catch (e) {
+                    log('error writing file: $e');
+                  }
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.open_in_browser),
+              onPressed: () {
+                FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['es', 'json'],
+                ).then((value) {
+                  if (value == null) {
+                    log('no files selected');
+                    return;
+                  }
+
+                  log('loading from ${value.paths.first}');
+
+                  try {
+                    var file = File(value.paths.first!);
+                    file.readAsString().then((value) {
+                      try {
+                        project = Project.fromJson(jsonDecode(value));
+                      } catch (e) {
+                        log('error decoding project: $e');
+                      }
+                    });
+                  } catch (e) {
+                    log('error reading file: $e');
+                  }
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.fast_forward),
+              onPressed: () {
+                log('running infer engine');
+              },
+            ),
+          ],
         ),
         body: TabBarView(
           children: [

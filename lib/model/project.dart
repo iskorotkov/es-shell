@@ -1,13 +1,17 @@
 import 'package:flutter/foundation.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'domain.dart';
 import 'rule.dart';
 import 'variable.dart';
 
+part 'project.g.dart';
+
+@JsonSerializable()
 class Project with ChangeNotifier {
-  List<Domain> domains = [];
-  List<Variable> variables = [];
-  List<Rule> rules = [];
+  List<Domain> domains;
+  List<Variable> variables;
+  List<Rule> rules;
   Variable target;
 
   Project({
@@ -15,19 +19,10 @@ class Project with ChangeNotifier {
     required this.variables,
     required this.rules,
     required this.target,
-  }) {
-    if (!variables.contains(target)) {
-      throw Exception('target variable isn\'t in variables list');
-    }
+  });
 
-    for (var variable in variables) {
-      if (variable.domain == null) {
-        continue;
-      }
+  factory Project.fromJson(Map<String, dynamic> json) =>
+      _$ProjectFromJson(json);
 
-      if (!domains.contains(variable.domain)) {
-        throw Exception('variable domain isn\'t in domains list');
-      }
-    }
-  }
+  Map<String, dynamic> toJson() => _$ProjectToJson(this);
 }
