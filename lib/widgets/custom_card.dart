@@ -19,6 +19,7 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 8,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,

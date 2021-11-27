@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -60,10 +58,10 @@ class _DomainsViewState extends State<DomainsView> {
         setState(() {
           project.domains.add(Domain(
             uuid: const Uuid().v4(),
-            name: 'New domain #${Random().nextInt(1000)}',
+            name: '',
             description: '',
             dataType: DataType.int,
-            values: [],
+            values: const [],
           ));
         });
       },

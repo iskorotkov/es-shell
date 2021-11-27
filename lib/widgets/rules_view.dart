@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -75,10 +73,10 @@ class _RulesViewState extends State<RulesView> {
         setState(() {
           project.rules.add(Rule(
             uuid: const Uuid().v4(),
-            name: 'New rule #${Random().nextInt(1000)}',
+            name: '',
             description: '',
-            conditions: [],
-            results: [],
+            conditions: const [],
+            results: const [],
           ));
         });
       },

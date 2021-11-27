@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -48,7 +46,7 @@ class _VariablesViewState extends State<VariablesView> {
         setState(() {
           project.variables.add(Variable(
             uuid: const Uuid().v4(),
-            name: 'New variable #${Random().nextInt(1000)}',
+            name: '',
             description: '',
             dataType: DataType.int,
           ));
