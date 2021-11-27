@@ -7,6 +7,7 @@ part of 'variable.dart';
 // **************************************************************************
 
 Variable _$VariableFromJson(Map<String, dynamic> json) => Variable(
+      uuid: json['uuid'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
       dataType: $enumDecodeNullable(_$DataTypeEnumMap, json['dataType']) ??
@@ -20,6 +21,7 @@ Variable _$VariableFromJson(Map<String, dynamic> json) => Variable(
     );
 
 Map<String, dynamic> _$VariableToJson(Variable instance) => <String, dynamic>{
+      'uuid': instance.uuid,
       'name': instance.name,
       'description': instance.description,
       'dataType': _$DataTypeEnumMap[instance.dataType],

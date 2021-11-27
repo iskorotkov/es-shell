@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../model/fact.dart';
 import '../model/project.dart';
@@ -73,6 +74,7 @@ class _RulesViewState extends State<RulesView> {
       onCreate: () {
         setState(() {
           project.rules.add(Rule(
+            uuid: const Uuid().v4(),
             name: 'New rule #${Random().nextInt(1000)}',
             description: '',
             conditions: [],
@@ -112,6 +114,7 @@ class _RulesViewState extends State<RulesView> {
         onAdd: () {
           setState(() {
             _selected!.conditions.add(Fact(
+              uuid: const Uuid().v4(),
               variable: project.variables.first,
               value: '',
             ));
@@ -160,6 +163,7 @@ class _RulesViewState extends State<RulesView> {
         onAdd: () {
           setState(() {
             _selected!.results.add(Fact(
+              uuid: const Uuid().v4(),
               variable: project.variables.first,
               value: '',
             ));

@@ -7,6 +7,7 @@ part of 'rule.dart';
 // **************************************************************************
 
 Rule _$RuleFromJson(Map<String, dynamic> json) => Rule(
+      uuid: json['uuid'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
       conditions: (json['conditions'] as List<dynamic>)
@@ -18,6 +19,7 @@ Rule _$RuleFromJson(Map<String, dynamic> json) => Rule(
     );
 
 Map<String, dynamic> _$RuleToJson(Rule instance) => <String, dynamic>{
+      'uuid': instance.uuid,
       'name': instance.name,
       'description': instance.description,
       'conditions': instance.conditions,

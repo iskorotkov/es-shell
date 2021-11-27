@@ -7,6 +7,7 @@ part of 'domain.dart';
 // **************************************************************************
 
 Domain _$DomainFromJson(Map<String, dynamic> json) => Domain(
+      uuid: json['uuid'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
       dataType: $enumDecode(_$DataTypeEnumMap, json['dataType']),
@@ -15,6 +16,7 @@ Domain _$DomainFromJson(Map<String, dynamic> json) => Domain(
     );
 
 Map<String, dynamic> _$DomainToJson(Domain instance) => <String, dynamic>{
+      'uuid': instance.uuid,
       'name': instance.name,
       'description': instance.description,
       'dataType': _$DataTypeEnumMap[instance.dataType],

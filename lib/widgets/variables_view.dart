@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../model/data_type.dart';
 import '../model/domain.dart';
@@ -46,6 +47,7 @@ class _VariablesViewState extends State<VariablesView> {
       onCreate: () {
         setState(() {
           project.variables.add(Variable(
+            uuid: const Uuid().v4(),
             name: 'New variable #${Random().nextInt(1000)}',
             description: '',
             dataType: DataType.int,
