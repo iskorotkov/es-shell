@@ -28,4 +28,7 @@ class Domain extends Equatable with ChangeNotifier {
   List<Object?> get props => [uuid];
 
   Map<String, dynamic> toJson() => _$DomainToJson(this);
+
+  @override
+  String toString() => 'Domain: $name';
 }

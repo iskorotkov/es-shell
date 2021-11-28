@@ -31,4 +31,7 @@ class Project extends Equatable with ChangeNotifier {
   List<Object?> get props => [uuid];
 
   Map<String, dynamic> toJson() => _$ProjectToJson(this);
+
+  @override
+  String toString() => 'Project: $uuid';
 }

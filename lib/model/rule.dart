@@ -28,4 +28,7 @@ class Rule extends Equatable with ChangeNotifier {
   List<Object?> get props => [uuid];
 
   Map<String, dynamic> toJson() => _$RuleToJson(this);
+
+  @override
+  String toString() => 'Rule: $name';
 }

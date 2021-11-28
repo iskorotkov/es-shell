@@ -33,4 +33,7 @@ class Variable extends Equatable with ChangeNotifier {
   List<Object?> get props => [uuid];
 
   Map<String, dynamic> toJson() => _$VariableToJson(this);
+
+  @override
+  String toString() => 'Variable: $name';
 }

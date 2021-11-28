@@ -24,4 +24,7 @@ class Fact extends Equatable with ChangeNotifier {
   List<Object?> get props => [uuid];
 
   Map<String, dynamic> toJson() => _$FactToJson(this);
+
+  @override
+  String toString() => 'Fact: $variable == $value';
 }

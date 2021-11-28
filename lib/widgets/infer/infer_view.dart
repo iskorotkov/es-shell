@@ -23,7 +23,20 @@ class InferView extends StatelessWidget {
     engine.memory.values[project.variables[0]] = 0;
     engine.memory.values[project.variables[2]] = 2;
 
-    engine.infer(project);
+    var result = engine.infer(project, (variable) async {
+      var input = await showDialog<String>(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: Text('123'),
+          );
+        },
+      );
+
+      return Object();
+    });
+
+    result.then((result) => log('result is $result'));
 
     return DefaultTabController(
       length: 3,
@@ -82,18 +95,18 @@ class InferView extends StatelessWidget {
     );
   }
 
-  Node _buildStackTree(StackFrameVariable stack, {bool expanded = true}) {
+  Node _buildStackTree(StackFrameVariable frame, {bool expanded = true}) {
     return Node(
-      key: stack.variable.uuid,
+      key: frame.variable.uuid,
       label: [
-        stack.variable.name,
-        if (stack.fromCache) ' (cached)',
-        if (stack.variable.description.isNotEmpty)
-          ' - ${stack.variable.description}',
+        frame.variable.name,
+        if (frame.fromCache) ' (cached)',
+        if (frame.variable.description.isNotEmpty)
+          ' - ${frame.variable.description}',
       ].join(),
       icon: Icons.memory,
       expanded: expanded,
-      children: stack.children
+      children: frame.children
           .map((e) => Node(
                 key: e.rule.uuid,
                 label: [

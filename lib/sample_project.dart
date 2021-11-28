@@ -1,3 +1,4 @@
+import 'package:es_shell/model/variable_type.dart';
 import 'package:uuid/uuid.dart';
 
 import 'model/domain.dart';
@@ -13,6 +14,7 @@ Project createSampleProject() {
       uuid: const Uuid().v4(),
       name: '1',
       description: '',
+      variableType: VariableType.prompted,
     ),
     Variable(
       uuid: const Uuid().v4(),
@@ -23,6 +25,7 @@ Project createSampleProject() {
       uuid: const Uuid().v4(),
       name: '3',
       description: '',
+      variableType: VariableType.prompted,
     ),
     Variable(
       uuid: const Uuid().v4(),
