@@ -8,10 +8,10 @@ import 'package:provider/provider.dart';
 
 import 'model/project.dart';
 import 'sample_project.dart';
-import 'widgets/domains_view.dart';
-import 'widgets/infer_view.dart';
-import 'widgets/rules_view.dart';
-import 'widgets/variables_view.dart';
+import 'widgets/editor/domains_view.dart';
+import 'widgets/editor/rules_view.dart';
+import 'widgets/editor/variables_view.dart';
+import 'widgets/infer/infer_view.dart';
 
 void main() {
   runApp(const App());

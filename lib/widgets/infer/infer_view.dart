@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:es_shell/infer/stack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 import 'package:provider/provider.dart';
 
-import '../infer/engine.dart';
-import '../model/project.dart';
+import '../../infer/engine.dart';
+import '../../model/project.dart';
+import 'closed_question.dart';
+import 'open_question.dart';
 
 class InferView extends StatelessWidget {
   const InferView({
@@ -22,11 +26,12 @@ class InferView extends StatelessWidget {
     engine.infer(project);
 
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           bottom: const TabBar(
             tabs: [
+              Tab(text: 'Run'),
               Tab(text: 'Memory'),
               Tab(text: 'Resolution stack'),
             ],
@@ -34,6 +39,13 @@ class InferView extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
+            ListView(
+              padding: const EdgeInsets.all(8),
+              children: [
+                OpenQuestion(),
+                ClosedQuestion(),
+              ],
+            ),
             ListView(
               padding: const EdgeInsets.all(8),
               children: engine.memory.values.entries

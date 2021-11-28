@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/rule.dart';
-import 'custom_card.dart';
+import '../../model/rule.dart';
+import '../common/custom_card.dart';
 
 class RuleCard extends StatelessWidget {
   final VoidCallback? onTap;

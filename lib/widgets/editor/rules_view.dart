@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../model/fact.dart';
-import '../model/project.dart';
-import '../model/rule.dart';
-import '../model/variable.dart';
-import 'custom_view.dart';
-import 'custom_view_heading.dart';
+import '../../model/fact.dart';
+import '../../model/project.dart';
+import '../../model/rule.dart';
+import '../../model/variable.dart';
+import '../common/custom_view.dart';
+import '../common/custom_view_heading.dart';
 import 'rule_card.dart';
 
 class RulesView extends StatefulWidget {

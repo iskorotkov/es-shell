@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../model/data_type.dart';
-import '../model/domain.dart';
-import '../model/project.dart';
-import 'custom_view.dart';
-import 'custom_view_heading.dart';
+import '../../model/data_type.dart';
+import '../../model/domain.dart';
+import '../../model/project.dart';
+import '../common/custom_view.dart';
+import '../common/custom_view_heading.dart';
 import 'domain_card.dart';
 
 class DomainsView extends StatefulWidget {
