@@ -1,14 +1,18 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:es_shell/widgets/infer/question.dart';
 import 'package:flutter/material.dart';
 
-class OpenQuestion extends StatelessWidget {
+class OpenQuestion extends Question {
   const OpenQuestion({
     Key? key,
-  }) : super(key: key);
+    required Completer<String> completer,
+  }) : super(key: key, completer: completer);
 
   @override
   Widget build(BuildContext context) {
+    var controller = TextEditingController();
     return Card(
       elevation: 8,
       child: Padding(
@@ -24,14 +28,15 @@ class OpenQuestion extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: TextEditingController(),
+                      controller: controller,
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      log('clicked button');
+                      log('confirmed answer ${controller.text}');
+                      resolve(controller.text);
                     },
-                    child: Text('Confirm'),
+                    child: const Text('Confirm'),
                   ),
                 ],
               ),

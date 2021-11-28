@@ -1,5 +1,5 @@
 import '../model/variable.dart';
 
 class Memory {
-  Map<Variable, Object?> values = <Variable, Object?>{};
+  Map<Variable, String?> values = <Variable, String?>{};
 }

@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:es_shell/widgets/infer/question.dart';
 import 'package:flutter/material.dart';
 
-class ClosedQuestion extends StatelessWidget {
+class ClosedQuestion extends Question {
   const ClosedQuestion({
     Key? key,
-  }) : super(key: key);
+    required Completer<String> completer,
+  }) : super(key: key, completer: completer);
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +24,13 @@ class ClosedQuestion extends StatelessWidget {
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [1, 2, 3]
+                children: ['1', '2', '3']
                     .map((e) => Padding(
                           padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                           child: ElevatedButton(
                             onPressed: () {
-                              log('clicked $e');
+                              log('selected option $e');
+                              resolve(e);
                             },
                             child: Text(e.toString()),
                           ),

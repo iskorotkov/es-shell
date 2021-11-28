@@ -12,7 +12,7 @@ Domain _$DomainFromJson(Map<String, dynamic> json) => Domain(
       description: json['description'] as String,
       dataType: $enumDecode(_$DataTypeEnumMap, json['dataType']),
       values:
-          (json['values'] as List<dynamic>).map((e) => e as Object).toList(),
+          (json['values'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$DomainToJson(Domain instance) => <String, dynamic>{

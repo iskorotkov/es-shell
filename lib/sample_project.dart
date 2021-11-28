@@ -42,12 +42,12 @@ Project createSampleProject() {
         Fact(
           uuid: const Uuid().v4(),
           variable: variables[1],
-          value: 1,
+          value: '1',
         ),
         Fact(
           uuid: const Uuid().v4(),
           variable: variables[2],
-          value: 2,
+          value: '2',
         ),
       ],
       results: [
@@ -66,14 +66,14 @@ Project createSampleProject() {
         Fact(
           uuid: const Uuid().v4(),
           variable: variables[0],
-          value: 0,
+          value: '0',
         ),
       ],
       results: [
         Fact(
           uuid: const Uuid().v4(),
           variable: variables[1],
-          value: 1,
+          value: '1',
         ),
       ],
     ),

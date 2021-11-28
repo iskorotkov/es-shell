@@ -1,42 +1,40 @@
+import 'dart:async';
 import 'dart:developer';
 
-import 'package:es_shell/infer/stack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 import 'package:provider/provider.dart';
 
 import '../../infer/engine.dart';
+import '../../infer/stack.dart';
 import '../../model/project.dart';
 import 'closed_question.dart';
 import 'open_question.dart';
+import 'question.dart';
 
-class InferView extends StatelessWidget {
+class InferView extends StatefulWidget {
   const InferView({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<InferView> createState() => _InferViewState();
+}
+
+class _InferViewState extends State<InferView> {
+  final List<Question> _questions = [];
+  final Engine _engine = Engine();
+  bool _firstRender = true;
+
+  @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
 
-    var engine = Engine();
-    engine.memory.values[project.variables[0]] = 0;
-    engine.memory.values[project.variables[2]] = 2;
-
-    var result = engine.infer(project, (variable) async {
-      var input = await showDialog<String>(
-        context: context,
-        builder: (context) {
-          return Center(
-            child: Text('123'),
-          );
-        },
-      );
-
-      return Object();
-    });
-
-    result.then((result) => log('result is $result'));
+    if (_firstRender) {
+      _firstRender = false;
+      var result = _engine.infer(project, _promptUser);
+      result.then((result) => log('result is $result'));
+    }
 
     return DefaultTabController(
       length: 3,
@@ -54,14 +52,11 @@ class InferView extends StatelessWidget {
           children: [
             ListView(
               padding: const EdgeInsets.all(8),
-              children: [
-                OpenQuestion(),
-                ClosedQuestion(),
-              ],
+              children: _questions.map((e) => e).toList(),
             ),
             ListView(
               padding: const EdgeInsets.all(8),
-              children: engine.memory.values.entries
+              children: _engine.memory.values.entries
                   .map(
                     (entry) => Card(
                       elevation: 8,
@@ -75,20 +70,23 @@ class InferView extends StatelessWidget {
                   )
                   .toList(),
             ),
-            TreeView(
-              theme: TreeViewTheme(
-                expanderTheme: const ExpanderThemeData(
-                  type: ExpanderType.chevron,
+            if (_engine.stack != null)
+              TreeView(
+                theme: TreeViewTheme(
+                  expanderTheme: const ExpanderThemeData(
+                    type: ExpanderType.chevron,
+                  ),
+                  labelStyle: Theme.of(context).textTheme.bodyText2!,
+                  parentLabelStyle: Theme.of(context).textTheme.bodyText2!,
                 ),
-                labelStyle: Theme.of(context).textTheme.bodyText2!,
-                parentLabelStyle: Theme.of(context).textTheme.bodyText2!,
+                controller: TreeViewController(
+                  children: [_buildStackTree(_engine.stack!, expanded: true)],
+                ),
               ),
-              controller: TreeViewController(
-                children: [
-                  _buildStackTree(engine.stack!, expanded: true),
-                ],
+            if (_engine.stack == null)
+              const Center(
+                child: Text('Stack not available'),
               ),
-            ),
           ],
         ),
       ),
@@ -121,5 +119,26 @@ class InferView extends StatelessWidget {
               ))
           .toList(),
     );
+  }
+
+  Future<String> _promptUser(variable) {
+    var completer = Completer<String>();
+
+    Question q;
+    if (variable.domain != null) {
+      q = ClosedQuestion(
+        completer: completer,
+      );
+    } else {
+      q = OpenQuestion(
+        completer: completer,
+      );
+    }
+
+    setState(() {
+      _questions.add(q);
+    });
+
+    return completer.future;
   }
 }

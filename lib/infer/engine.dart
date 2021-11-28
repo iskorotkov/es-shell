@@ -1,19 +1,18 @@
 import 'dart:developer';
 
-import 'package:es_shell/model/variable_type.dart';
-
 import '../model/project.dart';
 import '../model/variable.dart';
+import '../model/variable_type.dart';
 import 'memory.dart';
 import 'stack.dart';
 
-typedef PromptVariableCallback = Future<Object> Function(Variable variable);
+typedef PromptVariableCallback = Future<String> Function(Variable variable);
 
 class Engine {
   Memory memory = Memory();
   StackFrameVariable? stack;
 
-  Future<Object?> infer(Project project, PromptVariableCallback prompt) async {
+  Future<String?> infer(Project project, PromptVariableCallback prompt) async {
     stack = StackFrameVariable(variable: project.target, fromCache: false);
     await _infer(project, prompt, project.target, stack!);
     return memory.values[project.target];

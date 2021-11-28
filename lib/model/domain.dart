@@ -12,7 +12,7 @@ class Domain extends Equatable with ChangeNotifier {
   String name;
   String description;
   DataType dataType;
-  List<Object> values;
+  List<String> values;
 
   Domain({
     required this.uuid,

@@ -10,7 +10,7 @@ part 'fact.g.dart';
 class Fact extends Equatable with ChangeNotifier {
   final String uuid;
   Variable variable;
-  Object value;
+  String value;
 
   Fact({
     required this.uuid,
