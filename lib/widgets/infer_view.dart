@@ -35,13 +35,17 @@ class InferView extends StatelessWidget {
         body: TabBarView(
           children: [
             ListView(
+              padding: const EdgeInsets.all(8),
               children: engine.memory.values.entries
                   .map(
-                    (entry) => ListTile(
-                      key: Key(entry.key.uuid),
-                      title: Text(entry.key.name),
-                      subtitle: Text(entry.key.description),
-                      trailing: Text(entry.value.toString()),
+                    (entry) => Card(
+                      elevation: 8,
+                      child: ListTile(
+                        key: Key(entry.key.uuid),
+                        title: Text(entry.key.name),
+                        subtitle: Text(entry.key.description),
+                        trailing: Text(entry.value.toString()),
+                      ),
                     ),
                   )
                   .toList(),
