@@ -24,23 +24,27 @@ class _ClosedQuestionCardState extends State<ClosedQuestionCard> {
         child: Row(
           children: [
             Expanded(
-              child: Text('Вопрос 123'),
+              child: Text('${widget.question.variable.name}?'),
             ),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: ['1', '2', '3']
-                    .map((e) => Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                          child: ElevatedButton(
-                            onPressed: () {
+                children: widget.question.variable.domain!.values.map((e) {
+                  var active =
+                      !widget.question.answered || widget.question.value == e;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                    child: ElevatedButton(
+                      onPressed: active
+                          ? () {
                               log('selected option $e');
                               widget.question.confirmAnswer(e);
-                            },
-                            child: Text(e.toString()),
-                          ),
-                        ))
-                    .toList(),
+                            }
+                          : null,
+                      child: Text(e.toString()),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ],

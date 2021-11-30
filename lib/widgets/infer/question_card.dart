@@ -22,6 +22,8 @@ class Question {
   saveAnswer(String value) {
     this.value = value;
   }
+
+  bool get answered => _completer.isCompleted;
 }
 
 abstract class QuestionCard extends StatefulWidget {

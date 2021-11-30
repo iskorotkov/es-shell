@@ -27,7 +27,7 @@ class _OpenQuestionCardState extends State<OpenQuestionCard> {
         child: Row(
           children: [
             Expanded(
-              child: Text('Вопрос 123'),
+              child: Text('${widget.question.variable.name}?'),
             ),
             Expanded(
               child: Row(
@@ -36,16 +36,19 @@ class _OpenQuestionCardState extends State<OpenQuestionCard> {
                   Expanded(
                     child: TextField(
                       controller: _controller,
+                      enabled: !widget.question.answered,
                       onChanged: (e) {
                         widget.question.saveAnswer(e);
                       },
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      log('confirmed answer ${_controller.text}');
-                      widget.question.confirmAnswer(_controller.text);
-                    },
+                    onPressed: !widget.question.answered
+                        ? () {
+                            log('confirmed answer ${_controller.text}');
+                            widget.question.confirmAnswer(_controller.text);
+                          }
+                        : null,
                     child: const Text('Confirm'),
                   ),
                 ],

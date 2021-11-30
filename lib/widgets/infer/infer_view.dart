@@ -32,8 +32,6 @@ class _InferViewState extends State<InferView> {
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
 
-    // TODO: Make buttons inactive after future is resolved.
-
     if (_firstRender) {
       _firstRender = false;
       var result = _engine.infer(project, _promptUser);
