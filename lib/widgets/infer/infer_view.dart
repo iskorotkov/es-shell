@@ -27,6 +27,7 @@ class _InferViewState extends State<InferView> {
   String? _result;
   bool _resultSet = false;
   bool _firstRender = true;
+  bool _expandStack = true;
 
   @override
   Widget build(BuildContext context) {
@@ -69,16 +70,53 @@ class _InferViewState extends State<InferView> {
 
   Widget _buildStackTab() {
     if (_engine.stack != null) {
-      return TreeView(
-        theme: TreeViewTheme(
-          expanderTheme: const ExpanderThemeData(
-            type: ExpanderType.chevron,
-          ),
-          labelStyle: Theme.of(context).textTheme.bodyText2!,
-          parentLabelStyle: Theme.of(context).textTheme.bodyText2!,
-        ),
-        controller: TreeViewController(
-          children: [_buildStackTree(_engine.stack!, expanded: true)],
+      return Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _expandStack = true;
+                      });
+                    },
+                    child: const Text('Expand all'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _expandStack = false;
+                      });
+                    },
+                    child: const Text('Collapse all'),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: TreeView(
+                theme: TreeViewTheme(
+                  expanderTheme: const ExpanderThemeData(
+                    type: ExpanderType.chevron,
+                  ),
+                  labelStyle: Theme.of(context).textTheme.bodyText2!,
+                  parentLabelStyle: Theme.of(context).textTheme.bodyText2!,
+                ),
+                controller: TreeViewController(
+                  children: [
+                    _buildStackTree(_engine.stack!, expanded: _expandStack)
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
