@@ -80,7 +80,7 @@ class _VariablesViewState extends State<VariablesView> {
         },
       ),
       const CustomViewHeading(text: 'Type'),
-      DropdownButton<DataType>(
+      DropdownButtonFormField<DataType>(
         value: _selected!.dataType,
         onChanged: (value) {
           setState(() {
@@ -95,7 +95,7 @@ class _VariablesViewState extends State<VariablesView> {
             .toList(),
       ),
       const CustomViewHeading(text: 'Domain'),
-      DropdownButton<Domain>(
+      DropdownButtonFormField<Domain>(
         value: _selected!.domain,
         onChanged: (value) {
           setState(() {

@@ -93,7 +93,7 @@ class _DomainsViewState extends State<DomainsView> {
         },
       ),
       const CustomViewHeading(text: 'Type'),
-      DropdownButton<DataType>(
+      DropdownButtonFormField<DataType>(
         value: _selected!.dataType,
         onChanged: (value) {
           setState(() {

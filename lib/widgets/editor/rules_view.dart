@@ -127,22 +127,27 @@ class _RulesViewState extends State<RulesView> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              DropdownButton<Variable>(
-                value: _selected!.conditions[i].variable,
-                onChanged: (value) {
-                  setState(() {
-                    _selected!.conditions[i].variable =
-                        value ?? _selected!.conditions[i].variable;
-                  });
-                },
-                items: project.variables
-                    .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.name),
-                        ))
-                    .toList(),
+              Expanded(
+                child: DropdownButtonFormField<Variable>(
+                  value: _selected!.conditions[i].variable,
+                  onChanged: (value) {
+                    setState(() {
+                      _selected!.conditions[i].variable =
+                          value ?? _selected!.conditions[i].variable;
+                    });
+                  },
+                  items: project.variables
+                      .map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.name),
+                          ))
+                      .toList(),
+                ),
               ),
-              const Text('='),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Text('='),
+              ),
               Expanded(
                 child: TextField(
                   controller: _conditionsControllers[i],
@@ -176,22 +181,27 @@ class _RulesViewState extends State<RulesView> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              DropdownButton<Variable>(
-                value: _selected!.results[i].variable,
-                onChanged: (value) {
-                  setState(() {
-                    _selected!.results[i].variable =
-                        value ?? _selected!.results[i].variable;
-                  });
-                },
-                items: project.variables
-                    .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e.name),
-                        ))
-                    .toList(),
+              Expanded(
+                child: DropdownButtonFormField<Variable>(
+                  value: _selected!.results[i].variable,
+                  onChanged: (value) {
+                    setState(() {
+                      _selected!.results[i].variable =
+                          value ?? _selected!.results[i].variable;
+                    });
+                  },
+                  items: project.variables
+                      .map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e.name),
+                          ))
+                      .toList(),
+                ),
               ),
-              const Text('='),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Text('='),
+              ),
               Expanded(
                 child: TextField(
                   controller: _resultsControllers[i],
