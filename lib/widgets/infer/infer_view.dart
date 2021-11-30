@@ -8,9 +8,9 @@ import 'package:provider/provider.dart';
 import '../../infer/engine.dart';
 import '../../infer/stack.dart';
 import '../../model/project.dart';
-import 'closed_question.dart';
-import 'open_question.dart';
-import 'question.dart';
+import 'closed_question_card.dart';
+import 'open_question_card.dart';
+import 'question_card.dart';
 
 class InferView extends StatefulWidget {
   const InferView({
@@ -29,6 +29,12 @@ class _InferViewState extends State<InferView> {
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
+
+    // TODO: Place engine inside provider.
+    // TODO: Get rid of firstRender field.
+    // TODO: Make buttons inactive after future is resolved.
+    // FIXME: Memory tab updates only after hot reload.
+    // FIXME: Values in inputs are cleared when tab is switched.
 
     if (_firstRender) {
       _firstRender = false;
@@ -52,7 +58,19 @@ class _InferViewState extends State<InferView> {
           children: [
             ListView(
               padding: const EdgeInsets.all(8),
-              children: _questions.map((e) => e).toList(),
+              children: _questions.map((e) {
+                if (e.variable.domain != null) {
+                  return ClosedQuestionCard(
+                    key: Key(e.variable.uuid),
+                    question: e,
+                  );
+                }
+
+                return OpenQuestionCard(
+                  key: Key(e.variable.uuid),
+                  question: e,
+                );
+              }).toList(),
             ),
             ListView(
               padding: const EdgeInsets.all(8),
@@ -124,19 +142,11 @@ class _InferViewState extends State<InferView> {
   Future<String> _promptUser(variable) {
     var completer = Completer<String>();
 
-    Question q;
-    if (variable.domain != null) {
-      q = ClosedQuestion(
-        completer: completer,
-      );
-    } else {
-      q = OpenQuestion(
-        completer: completer,
-      );
-    }
-
     setState(() {
-      _questions.add(q);
+      _questions.add(Question(
+        variable: variable,
+        completer: completer,
+      ));
     });
 
     return completer.future;

@@ -1,15 +1,20 @@
-import 'dart:async';
 import 'dart:developer';
 
-import 'package:es_shell/widgets/infer/question.dart';
 import 'package:flutter/material.dart';
 
-class ClosedQuestion extends Question {
-  const ClosedQuestion({
-    Key? key,
-    required Completer<String> completer,
-  }) : super(key: key, completer: completer);
+import 'question_card.dart';
 
+class ClosedQuestionCard extends QuestionCard {
+  const ClosedQuestionCard({
+    Key? key,
+    required Question question,
+  }) : super(key: key, question: question);
+
+  @override
+  State<ClosedQuestionCard> createState() => _ClosedQuestionCardState();
+}
+
+class _ClosedQuestionCardState extends State<ClosedQuestionCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -30,7 +35,7 @@ class ClosedQuestion extends Question {
                           child: ElevatedButton(
                             onPressed: () {
                               log('selected option $e');
-                              resolve(e);
+                              widget.question.confirmAnswer(e);
                             },
                             child: Text(e.toString()),
                           ),
