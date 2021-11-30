@@ -24,6 +24,7 @@ class InferView extends StatefulWidget {
 class _InferViewState extends State<InferView> {
   final List<Question> _questions = [];
   final Engine _engine = Engine();
+  String? _result;
   bool _firstRender = true;
 
   @override
@@ -39,7 +40,12 @@ class _InferViewState extends State<InferView> {
     if (_firstRender) {
       _firstRender = false;
       var result = _engine.infer(project, _promptUser);
-      result.then((result) => log('result is $result'));
+      result.then((result) {
+        log('result is $result');
+        setState(() {
+          _result = result;
+        });
+      });
     }
 
     return DefaultTabController(
@@ -56,58 +62,99 @@ class _InferViewState extends State<InferView> {
         ),
         body: TabBarView(
           children: [
-            ListView(
-              padding: const EdgeInsets.all(8),
-              children: _questions.map((e) {
-                if (e.variable.domain != null) {
-                  return ClosedQuestionCard(
-                    key: Key(e.variable.uuid),
-                    question: e,
-                  );
-                }
-
-                return OpenQuestionCard(
-                  key: Key(e.variable.uuid),
-                  question: e,
-                );
-              }).toList(),
-            ),
-            ListView(
-              padding: const EdgeInsets.all(8),
-              children: _engine.memory.values.entries
-                  .map(
-                    (entry) => Card(
-                      elevation: 8,
-                      child: ListTile(
-                        key: Key(entry.key.uuid),
-                        title: Text(entry.key.name),
-                        subtitle: Text(entry.key.description),
-                        trailing: Text(entry.value.toString()),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-            if (_engine.stack != null)
-              TreeView(
-                theme: TreeViewTheme(
-                  expanderTheme: const ExpanderThemeData(
-                    type: ExpanderType.chevron,
-                  ),
-                  labelStyle: Theme.of(context).textTheme.bodyText2!,
-                  parentLabelStyle: Theme.of(context).textTheme.bodyText2!,
-                ),
-                controller: TreeViewController(
-                  children: [_buildStackTree(_engine.stack!, expanded: true)],
-                ),
-              ),
-            if (_engine.stack == null)
-              const Center(
-                child: Text('Stack not available'),
-              ),
+            _buildRunTab(),
+            _buildMemoryTab(),
+            _buildStackTab(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildStackTab() {
+    if (_engine.stack != null) {
+      return TreeView(
+        theme: TreeViewTheme(
+          expanderTheme: const ExpanderThemeData(
+            type: ExpanderType.chevron,
+          ),
+          labelStyle: Theme.of(context).textTheme.bodyText2!,
+          parentLabelStyle: Theme.of(context).textTheme.bodyText2!,
+        ),
+        controller: TreeViewController(
+          children: [_buildStackTree(_engine.stack!, expanded: true)],
+        ),
+      );
+    }
+
+    return const Center(
+      child: Text('Stack not available'),
+    );
+  }
+
+  Widget _buildMemoryTab() {
+    return ListView(
+      padding: const EdgeInsets.all(8),
+      children: _engine.memory.values.entries
+          .map(
+            (entry) => Card(
+              elevation: 8,
+              child: ListTile(
+                key: Key(entry.key.uuid),
+                title: Text(entry.key.name),
+                subtitle: Text(entry.key.description),
+                trailing: Text(entry.value.toString()),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildRunTab() {
+    var questionsCards = _questions.map<Widget>((e) {
+      if (e.variable.domain != null) {
+        return ClosedQuestionCard(
+          key: Key(e.variable.uuid),
+          question: e,
+        );
+      }
+
+      return OpenQuestionCard(
+        key: Key(e.variable.uuid),
+        question: e,
+      );
+    }).toList();
+
+    if (_result != null) {
+      questionsCards.add(Card(
+        elevation: 8,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Text('Result'),
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Text(_result!),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ));
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(8),
+      children: questionsCards,
     );
   }
 
