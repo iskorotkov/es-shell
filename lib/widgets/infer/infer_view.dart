@@ -25,17 +25,14 @@ class _InferViewState extends State<InferView> {
   final List<Question> _questions = [];
   final Engine _engine = Engine();
   String? _result;
+  bool _resultSet = false;
   bool _firstRender = true;
 
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
 
-    // TODO: Place engine inside provider.
-    // TODO: Get rid of firstRender field.
     // TODO: Make buttons inactive after future is resolved.
-    // FIXME: Memory tab updates only after hot reload.
-    // FIXME: Values in inputs are cleared when tab is switched.
 
     if (_firstRender) {
       _firstRender = false;
@@ -44,6 +41,7 @@ class _InferViewState extends State<InferView> {
         log('result is $result');
         setState(() {
           _result = result;
+          _resultSet = true;
         });
       });
     }
@@ -126,7 +124,7 @@ class _InferViewState extends State<InferView> {
       );
     }).toList();
 
-    if (_result != null) {
+    if (_resultSet) {
       questionsCards.add(Card(
         elevation: 8,
         child: Padding(
@@ -141,7 +139,7 @@ class _InferViewState extends State<InferView> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Expanded(
-                      child: Text(_result!),
+                      child: Text(_result ?? '<no solution>'),
                     ),
                   ],
                 ),
