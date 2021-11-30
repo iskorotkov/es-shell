@@ -1,14 +1,22 @@
-import 'package:es_shell/model/variable_type.dart';
 import 'package:uuid/uuid.dart';
 
+import 'model/data_type.dart';
 import 'model/domain.dart';
 import 'model/fact.dart';
 import 'model/project.dart';
 import 'model/rule.dart';
 import 'model/variable.dart';
+import 'model/variable_type.dart';
 
 Project createSampleProject() {
-  var domains = <Domain>[];
+  var domains = <Domain>[
+    Domain(
+        uuid: const Uuid().v4(),
+        name: '1',
+        description: '',
+        dataType: DataType.int,
+        values: ['x', 'y', '2']),
+  ];
   var variables = <Variable>[
     Variable(
       uuid: const Uuid().v4(),
@@ -26,6 +34,7 @@ Project createSampleProject() {
       name: '3',
       description: '',
       variableType: VariableType.prompted,
+      domain: domains[0],
     ),
     Variable(
       uuid: const Uuid().v4(),
