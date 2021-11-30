@@ -137,6 +137,13 @@ class _HomePageState extends State<HomePage> {
             'Rule doesn\'t have a name. Set the name or delete the rule before proceeding.');
         return;
       }
+
+      if (_project.rules.where((element) => element.name == rule.name).length !=
+          1) {
+        _showErrorDialog('Duplicated rule name',
+            'Several rules with the same name "${rule.name}" exist.');
+        return;
+      }
     }
 
     for (var variable in _project.variables) {
@@ -145,12 +152,30 @@ class _HomePageState extends State<HomePage> {
             'Variable doesn\'t have a name. Set the name or delete the variable before proceeding.');
         return;
       }
+
+      if (_project.variables
+              .where((element) => element.name == variable.name)
+              .length !=
+          1) {
+        _showErrorDialog('Duplicated variable name',
+            'Several variables with the same name "${variable.name}" exist.');
+        return;
+      }
     }
 
     for (var domain in _project.domains) {
       if (domain.name == '') {
         _showErrorDialog('Unnamed domain',
             'Domain doesn\'t have a name. Set the name or delete the domain before proceeding.');
+        return;
+      }
+
+      if (_project.domains
+              .where((element) => element.name == domain.name)
+              .length !=
+          1) {
+        _showErrorDialog('Duplicated domain name',
+            'Several domains with the same name "${domain.name}" exist.');
         return;
       }
     }
