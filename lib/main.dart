@@ -73,18 +73,7 @@ class _HomePageState extends State<HomePage> {
               ),
               IconButton(
                 icon: const Icon(Icons.fast_forward),
-                onPressed: () {
-                  log('running infer engine');
-
-                  Navigator.push(context, MaterialPageRoute<void>(
-                    builder: (context) {
-                      return ChangeNotifierProvider<Project>.value(
-                        value: _project,
-                        child: const InferView(),
-                      );
-                    },
-                  ));
-                },
+                onPressed: () => _infer(context),
               ),
               SizedBox(
                 width: 250,
@@ -121,6 +110,61 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _infer(BuildContext context) {
+    for (var rule in _project.rules) {
+      if (rule.name == '') {
+        _showErrorDialog('Unnamed rule',
+            'Rule doesn\'t have a name. Set the name or delete the rule before proceeding.');
+        return;
+      }
+    }
+
+    for (var variable in _project.variables) {
+      if (variable.name == '') {
+        _showErrorDialog('Unnamed variable',
+            'Variable doesn\'t have a name. Set the name or delete the variable before proceeding.');
+        return;
+      }
+    }
+
+    for (var domain in _project.domains) {
+      if (domain.name == '') {
+        _showErrorDialog('Unnamed domain',
+            'Domain doesn\'t have a name. Set the name or delete the domain before proceeding.');
+        return;
+      }
+    }
+
+    log('running infer engine');
+
+    Navigator.push(context, MaterialPageRoute<void>(
+      builder: (context) {
+        return ChangeNotifierProvider<Project>.value(
+          value: _project,
+          child: const InferView(),
+        );
+      },
+    ));
   }
 
   void _loadProject() {
