@@ -37,6 +37,7 @@ class _OpenQuestionCardState extends State<OpenQuestionCard> {
                     child: TextField(
                       controller: _controller,
                       enabled: !widget.question.answered,
+                      autofocus: true,
                       onChanged: (e) {
                         widget.question.saveAnswer(e);
                       },

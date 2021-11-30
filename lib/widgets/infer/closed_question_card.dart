@@ -35,6 +35,8 @@ class _ClosedQuestionCardState extends State<ClosedQuestionCard> {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: ElevatedButton(
+                      autofocus:
+                          e == widget.question.variable.domain!.values[0],
                       onPressed: active
                           ? () {
                               log('selected option $e');
