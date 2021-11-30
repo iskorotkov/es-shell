@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:es_shell/model/variable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -64,60 +65,11 @@ class _HomePageState extends State<HomePage> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.save_alt),
-                onPressed: () {
-                  FilePicker.platform.saveFile(
-                    fileName: 'project.es',
-                    type: FileType.custom,
-                    allowedExtensions: ['es', 'json'],
-                  ).then((value) {
-                    if (value == null) {
-                      log('no file selected');
-                      return;
-                    }
-
-                    log('saving to $value');
-
-                    try {
-                      var file = File(value);
-                      var json = jsonEncode(_project.toJson());
-
-                      file.writeAsString(json);
-                    } catch (e) {
-                      log('error writing file: $e');
-                    }
-                  });
-                },
+                onPressed: _saveProject,
               ),
               IconButton(
                 icon: const Icon(Icons.open_in_browser),
-                onPressed: () {
-                  FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['es', 'json'],
-                  ).then((value) {
-                    if (value == null) {
-                      log('no files selected');
-                      return;
-                    }
-
-                    log('loading from ${value.paths.first}');
-
-                    try {
-                      var file = File(value.paths.first!);
-                      file.readAsString().then((value) {
-                        try {
-                          setState(() {
-                            _project = Project.fromJson(jsonDecode(value));
-                          });
-                        } catch (e) {
-                          log('error decoding project: $e');
-                        }
-                      });
-                    } catch (e) {
-                      log('error reading file: $e');
-                    }
-                  });
-                },
+                onPressed: _loadProject,
               ),
               IconButton(
                 icon: const Icon(Icons.fast_forward),
@@ -134,6 +86,29 @@ class _HomePageState extends State<HomePage> {
                   ));
                 },
               ),
+              SizedBox(
+                width: 250,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: DropdownButtonFormField(
+                    onChanged: (value) {
+                      _project.target = value as Variable? ?? _project.target;
+                    },
+                    value: _project.target,
+                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                          color: Colors.white,
+                        ),
+                    dropdownColor: Theme.of(context).primaryColor,
+                    items: _project.variables
+                        .map((e) => DropdownMenuItem(
+                              key: Key(e.uuid),
+                              value: e,
+                              child: Text(e.name),
+                            ))
+                        .toList(),
+                  ),
+                ),
+              ),
             ],
           ),
           body: TabBarView(
@@ -146,5 +121,58 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void _loadProject() {
+    FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['es', 'json'],
+    ).then((value) {
+      if (value == null) {
+        log('no files selected');
+        return;
+      }
+
+      log('loading from ${value.paths.first}');
+
+      try {
+        var file = File(value.paths.first!);
+        file.readAsString().then((value) {
+          try {
+            setState(() {
+              _project = Project.fromJson(jsonDecode(value));
+            });
+          } catch (e) {
+            log('error decoding project: $e');
+          }
+        });
+      } catch (e) {
+        log('error reading file: $e');
+      }
+    });
+  }
+
+  void _saveProject() {
+    FilePicker.platform.saveFile(
+      fileName: 'project.es',
+      type: FileType.custom,
+      allowedExtensions: ['es', 'json'],
+    ).then((value) {
+      if (value == null) {
+        log('no file selected');
+        return;
+      }
+
+      log('saving to $value');
+
+      try {
+        var file = File(value);
+        var json = jsonEncode(_project.toJson());
+
+        file.writeAsString(json);
+      } catch (e) {
+        log('error writing file: $e');
+      }
+    });
   }
 }
