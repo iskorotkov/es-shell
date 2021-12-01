@@ -39,7 +39,7 @@ class CustomView<T> extends StatelessWidget {
         ),
         if (sidebar.isNotEmpty)
           SizedBox(
-            width: 300,
+            width: MediaQuery.of(context).size.width / 3,
             child: _buildToolbar(context),
           )
       ],

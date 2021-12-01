@@ -6,6 +6,7 @@ import '../../model/data_type.dart';
 import '../../model/domain.dart';
 import '../../model/project.dart';
 import '../../model/variable.dart';
+import '../common/custom_autocomplete.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
 import 'variable_card.dart';
@@ -95,25 +96,28 @@ class _VariablesViewState extends State<VariablesView> {
             .toList(),
       ),
       const CustomViewHeading(text: 'Domain'),
-      DropdownButtonFormField<Domain>(
-        value: _selected!.domain,
-        onChanged: (value) {
+      CustomAutocomplete(
+        value: _selected!.domain?.name,
+        items: project.domains.map((e) => e.name),
+        optional: true,
+        onCreateNew: (value) {
           setState(() {
-            _selected!.domain = value;
+            project.domains.add(Domain(
+              uuid: const Uuid().v4(),
+              name: value,
+              description: '',
+              dataType: DataType.string,
+              values: const [],
+            ));
           });
         },
-        items: [
-          ...project.domains
-              .map((d) => DropdownMenuItem(
-                    child: Text(d.name),
-                    value: d,
-                  ))
-              .toList(),
-          const DropdownMenuItem(
-            child: Text('<none>'),
-            value: null,
-          ),
-        ],
+        onChanged: (value) {
+          setState(() {
+            _selected!.domain = value == null
+                ? null
+                : project.domains.firstWhere((e) => e.name == value);
+          });
+        },
       ),
     ];
   }

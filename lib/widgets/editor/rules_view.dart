@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../model/data_type.dart';
 import '../../model/fact.dart';
 import '../../model/project.dart';
 import '../../model/rule.dart';
 import '../../model/variable.dart';
+import '../../model/variable_type.dart';
+import '../common/custom_autocomplete.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
 import 'rule_card.dart';
@@ -128,20 +131,27 @@ class _RulesViewState extends State<RulesView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: DropdownButtonFormField<Variable>(
-                  value: _selected!.conditions[i].variable,
+                child: CustomAutocomplete(
+                  value: _selected!.conditions[i].variable.name,
+                  items: project.variables.map((e) => e.name),
+                  onCreateNew: (value) {
+                    setState(() {
+                      project.variables.add(Variable(
+                        uuid: const Uuid().v4(),
+                        name: value,
+                        description: '',
+                        dataType: DataType.string,
+                        variableType: VariableType.inferred,
+                        domain: null,
+                      ));
+                    });
+                  },
                   onChanged: (value) {
                     setState(() {
                       _selected!.conditions[i].variable =
-                          value ?? _selected!.conditions[i].variable;
+                          project.variables.firstWhere((e) => e.name == value);
                     });
                   },
-                  items: project.variables
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(e.name),
-                          ))
-                      .toList(),
                 ),
               ),
               const Padding(
@@ -182,20 +192,27 @@ class _RulesViewState extends State<RulesView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: DropdownButtonFormField<Variable>(
-                  value: _selected!.results[i].variable,
+                child: CustomAutocomplete(
+                  value: _selected!.results[i].variable.name,
+                  items: project.variables.map((e) => e.name),
+                  onCreateNew: (value) {
+                    setState(() {
+                      project.variables.add(Variable(
+                        uuid: const Uuid().v4(),
+                        name: value,
+                        description: '',
+                        dataType: DataType.string,
+                        variableType: VariableType.inferred,
+                        domain: null,
+                      ));
+                    });
+                  },
                   onChanged: (value) {
                     setState(() {
                       _selected!.results[i].variable =
-                          value ?? _selected!.results[i].variable;
+                          project.variables.firstWhere((e) => e.name == value);
                     });
                   },
-                  items: project.variables
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(e.name),
-                          ))
-                      .toList(),
                 ),
               ),
               const Padding(
