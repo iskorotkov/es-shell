@@ -1,5 +1,7 @@
+import '../model/rule.dart';
 import '../model/variable.dart';
 
 class Memory {
-  Map<Variable, String?> values = <Variable, String?>{};
+  Map<Variable, String> variables = <Variable, String>{};
+  Map<Rule, bool> rules = <Rule, bool>{};
 }

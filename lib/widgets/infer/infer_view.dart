@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:es_shell/infer/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
 import 'package:provider/provider.dart';
@@ -111,7 +112,8 @@ class _InferViewState extends State<InferView> {
                 ),
                 controller: TreeViewController(
                   children: [
-                    _buildStackTree(_engine.stack!, expanded: _expandStack)
+                    _buildStackTree(_engine.stack!, _engine.memory,
+                        expanded: _expandStack)
                   ],
                 ),
               ),
@@ -129,7 +131,7 @@ class _InferViewState extends State<InferView> {
   Widget _buildMemoryTab() {
     return ListView(
       padding: const EdgeInsets.all(8),
-      children: _engine.memory.values.entries
+      children: _engine.memory.variables.entries
           .map(
             (entry) => Card(
               elevation: 8,
@@ -192,28 +194,38 @@ class _InferViewState extends State<InferView> {
     );
   }
 
-  Node _buildStackTree(StackFrameVariable frame, {bool expanded = true}) {
+  Node _buildStackTree(StackFrameVariable frame, Memory memory,
+      {bool expanded = true}) {
     return Node(
       key: frame.variable.uuid,
       label: [
         frame.variable.name,
+        if (memory.variables.containsKey(frame.variable)) ...[
+          ' = ',
+          memory.variables[frame.variable]
+        ],
         if (frame.fromCache) ' (cached)',
         if (frame.variable.description.isNotEmpty)
           ' - ${frame.variable.description}',
       ].join(),
       icon: Icons.memory,
       expanded: expanded,
+      iconColor:
+          memory.variables[frame.variable] != null ? Colors.green : Colors.red,
       children: frame.children
           .map((e) => Node(
                 key: e.rule.uuid,
                 label: [
                   (e.rule.name),
+                  memory.rules[e.rule] ?? false ? ' matched' : ' not matched',
                   if (e.rule.description.isNotEmpty) ' - ${e.rule.description}'
                 ].join(),
                 expanded: expanded,
                 icon: Icons.rule,
+                iconColor:
+                    memory.rules[e.rule] ?? false ? Colors.green : Colors.red,
                 children: e.children
-                    .map((e) => _buildStackTree(e, expanded: expanded))
+                    .map((e) => _buildStackTree(e, memory, expanded: expanded))
                     .toList(),
               ))
           .toList(),

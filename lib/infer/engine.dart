@@ -15,7 +15,7 @@ class Engine {
   Future<String?> infer(Project project, PromptVariableCallback prompt) async {
     stack = StackFrameVariable(variable: project.target, fromCache: false);
     await _infer(project, prompt, project.target, stack!);
-    return memory.values[project.target];
+    return memory.variables[project.target];
   }
 
   _infer(Project project, PromptVariableCallback prompt, Variable target,
@@ -27,19 +27,24 @@ class Engine {
 
     ruleLoop:
     for (var rule in rules) {
+      if (memory.rules.containsKey(rule)) {
+        continue;
+      }
+
       var ruleFrame = StackFrameRule(rule: rule);
       stack.children.add(ruleFrame);
 
       log('took rule $rule');
 
       for (var condition in rule.conditions) {
-        var variableFrame = StackFrameVariable(variable: condition.variable);
+        var variableFrame =
+            StackFrameVariable(variable: condition.variable, fromCache: false);
         ruleFrame.children.add(variableFrame);
 
         log('took condition $condition');
         log('variable type is ${condition.variable.variableType}');
 
-        if (memory.values.containsKey(condition.variable)) {
+        if (memory.variables.containsKey(condition.variable)) {
           log('getting value from cache');
           variableFrame.fromCache = true;
         } else if (condition.variable.variableType == VariableType.inferred) {
@@ -48,21 +53,22 @@ class Engine {
         } else {
           log('asking user for value');
           var value = await prompt(condition.variable);
-          memory.values[condition.variable] = value;
+          memory.variables[condition.variable] = value;
         }
 
-        if (condition.value != memory.values[condition.variable]) {
+        if (condition.value != memory.variables[condition.variable]) {
           log('rule rejected');
+          memory.rules[rule] = false;
           continue ruleLoop;
         }
       }
 
       log('rule matched');
-      ruleFrame.matched = true;
+      memory.rules[rule] = true;
 
       for (var result in rule.results) {
         log('setting value of variable ${result.variable}');
-        memory.values[result.variable] = result.value;
+        memory.variables[result.variable] = result.value;
       }
     }
   }

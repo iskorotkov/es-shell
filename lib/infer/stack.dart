@@ -6,13 +6,12 @@ class StackFrameVariable {
   bool fromCache;
   final children = <StackFrameRule>[];
 
-  StackFrameVariable({required this.variable, this.fromCache = false});
+  StackFrameVariable({required this.variable, required this.fromCache});
 }
 
 class StackFrameRule {
   final Rule rule;
-  bool matched;
   final children = <StackFrameVariable>[];
 
-  StackFrameRule({required this.rule, this.matched = false});
+  StackFrameRule({required this.rule});
 }

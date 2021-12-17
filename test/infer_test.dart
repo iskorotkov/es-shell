@@ -22,7 +22,7 @@ void main() {
       });
 
       expect(res, equals('success'));
-      expect(engine.memory.values, hasLength(equals(4)));
+      expect(engine.memory.variables, hasLength(equals(4)));
     });
   });
 }
