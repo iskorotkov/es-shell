@@ -143,14 +143,28 @@ class _DomainsViewState extends State<DomainsView> {
         },
       ),
       for (var i = 0; i < _selected!.values.length; i++)
-        TextField(
-          controller: _valuesControllers[i],
-          onChanged: (value) {
-            setState(() {
-              _selected!.values[i] = value;
-              _selected!.values = _selected!.values;
-            });
-          },
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _valuesControllers[i],
+                onChanged: (value) {
+                  setState(() {
+                    _selected!.values[i] = value;
+                    _selected!.values = _selected!.values;
+                  });
+                },
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () {
+                setState(() {
+                  _selected!.values.removeAt(i);
+                });
+              },
+            ),
+          ],
         )
     ];
   }

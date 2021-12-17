@@ -179,11 +179,21 @@ class _RulesViewState extends State<RulesView> {
                     : TextField(
                         controller: _conditionsControllers[i],
                         onChanged: (value) {
-                          setState(() {
-                            _selected!.conditions[i].value = value;
-                          });
+                          setState(
+                            () {
+                              _selected!.conditions[i].value = value;
+                            },
+                          );
                         },
                       ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                onPressed: () {
+                  setState(() {
+                    _selected!.conditions.removeAt(i);
+                  });
+                },
               ),
             ],
           ),
@@ -255,11 +265,21 @@ class _RulesViewState extends State<RulesView> {
                     : TextField(
                         controller: _resultsControllers[i],
                         onChanged: (value) {
-                          setState(() {
-                            _selected!.results[i].value = value;
-                          });
+                          setState(
+                            () {
+                              _selected!.results[i].value = value;
+                            },
+                          );
                         },
                       ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                onPressed: () {
+                  setState(() {
+                    _selected!.results.removeAt(i);
+                  });
+                },
               ),
             ],
           ),
