@@ -66,6 +66,31 @@ class _DomainsViewState extends State<DomainsView> {
         });
       },
       onDelete: () {
+        var variablesWithDomain =
+            project.variables.where((e) => e.domain == _selected);
+        if (variablesWithDomain.isNotEmpty) {
+          var names = variablesWithDomain.map((e) => '"${e.name}"').join(', ');
+
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Can\'t delete domain'),
+              content: Text(
+                  'Domain "${_selected!.name}" is used in variable${variablesWithDomain.length == 1 ? '' : 's'} $names'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+          );
+
+          return;
+        }
+
         setState(() {
           project.domains.remove(_selected);
           _selected = null;

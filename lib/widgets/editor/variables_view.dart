@@ -54,6 +54,32 @@ class _VariablesViewState extends State<VariablesView> {
         });
       },
       onDelete: () {
+        var rulesWithVariable = project.rules.where((e) =>
+            e.results.map((e) => e.variable).contains(_selected) ||
+            e.conditions.map((e) => e.variable).contains(_selected));
+        if (rulesWithVariable.isNotEmpty || project.target == _selected) {
+          var names = rulesWithVariable.map((e) => '"${e.name}"').join(', ');
+
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Can\'t delete variable'),
+              content: Text(
+                  'Variable "${_selected!.name}" is used in rule${rulesWithVariable.length == 1 ? '' : 's'} $names'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+          );
+
+          return;
+        }
+
         setState(() {
           project.variables.remove(_selected);
           _selected = null;
