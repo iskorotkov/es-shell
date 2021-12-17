@@ -50,7 +50,7 @@ class Engine {
         } else if (condition.variable.variableType == VariableType.inferred) {
           log('inferring variable from rules');
           await _infer(project, prompt, condition.variable, variableFrame);
-        } else {
+        } else if (condition.variable.variableType == VariableType.prompted) {
           log('asking user for value');
           var value = await prompt(condition.variable);
           memory.variables[condition.variable] = value;
