@@ -112,24 +112,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _showErrorDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
   _infer(BuildContext context) {
     for (var rule in _project.rules) {
       if (rule.name == '') {
@@ -243,5 +225,23 @@ class _HomePageState extends State<HomePage> {
         log('error writing file: $e');
       }
     });
+  }
+
+  _showErrorDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 }
