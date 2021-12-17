@@ -234,7 +234,9 @@ class _RulesViewState extends State<RulesView> {
               Expanded(
                 child: CustomAutocomplete(
                   value: _selected!.results[i].variable.name,
-                  items: project.variables.map((e) => e.name),
+                  items: project.variables
+                      .where((e) => e.variableType == VariableType.inferred)
+                      .map((e) => e.name),
                   onCreateNew: (value) {
                     setState(() {
                       project.variables.add(Variable(
