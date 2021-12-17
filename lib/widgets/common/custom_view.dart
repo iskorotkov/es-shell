@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../utils/read_only_lock.dart';
 
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
@@ -22,38 +25,31 @@ class CustomView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var readOnlyLock = context.watch<ReadOnlyLock>();
     return Row(
       children: [
         Expanded(
           child: Scaffold(
-            body: ReorderableListView.builder(
-              scrollController: ScrollController(),
-              itemCount: items.length,
-              padding: const EdgeInsets.all(8),
-              itemBuilder: (context, index) =>
-                  itemBuilder(context, items[index]),
-              onReorder: (oldIndex, newIndex) {
-                var value = items[oldIndex];
-
-                if (newIndex > oldIndex) {
-                  for (var i = oldIndex; i < newIndex - 1; i++) {
-                    items[i] = items[i + 1];
-                  }
-
-                  items[newIndex - 1] = value;
-                } else {
-                  for (var i = oldIndex; i > newIndex; i--) {
-                    items[i] = items[i - 1];
-                  }
-
-                  items[newIndex] = value;
-                }
-              },
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: onCreate,
-              child: const Icon(Icons.add),
-            ),
+            body: readOnlyLock.locked
+                ? ListView.builder(
+                    itemCount: items.length,
+                    padding: const EdgeInsets.all(8),
+                    itemBuilder: (context, index) =>
+                        itemBuilder(context, items[index]),
+                  )
+                : ReorderableListView.builder(
+                    itemCount: items.length,
+                    padding: const EdgeInsets.all(8),
+                    itemBuilder: (context, index) =>
+                        itemBuilder(context, items[index]),
+                    onReorder: _reorderItems,
+                  ),
+            floatingActionButton: readOnlyLock.locked
+                ? null
+                : FloatingActionButton(
+                    onPressed: onCreate,
+                    child: const Icon(Icons.add),
+                  ),
           ),
         ),
         if (sidebar.isNotEmpty)
@@ -63,6 +59,24 @@ class CustomView<T> extends StatelessWidget {
           )
       ],
     );
+  }
+
+  void _reorderItems(oldIndex, newIndex) {
+    var value = items[oldIndex];
+
+    if (newIndex > oldIndex) {
+      for (var i = oldIndex; i < newIndex - 1; i++) {
+        items[i] = items[i + 1];
+      }
+
+      items[newIndex - 1] = value;
+    } else {
+      for (var i = oldIndex; i > newIndex; i--) {
+        items[i] = items[i - 1];
+      }
+
+      items[newIndex] = value;
+    }
   }
 
   Widget _buildToolbar(BuildContext context) {

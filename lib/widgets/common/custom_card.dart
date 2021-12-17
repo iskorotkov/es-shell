@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../utils/read_only_lock.dart';
 
 class CustomCard extends StatelessWidget {
   final String title;
@@ -20,12 +23,13 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var readOnlyLock = context.watch<ReadOnlyLock>();
     return Card(
       elevation: 8,
       clipBehavior: Clip.antiAlias,
       color: selected ? Theme.of(context).primaryColor : null,
       child: InkWell(
-        onTap: onTap,
+        onTap: readOnlyLock.locked ? null : onTap,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(

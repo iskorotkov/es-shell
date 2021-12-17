@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:es_shell/model/variable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'model/project.dart';
+import 'model/variable.dart';
 import 'sample_project.dart';
+import 'utils/read_only_lock.dart';
 import 'widgets/editor/domains_view.dart';
 import 'widgets/editor/rules_view.dart';
 import 'widgets/editor/variables_view.dart';
@@ -45,11 +46,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Project _project = createSampleProject();
+  final ReadOnlyLock _readOnlyLock = ReadOnlyLock(true);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Project>.value(
-      value: _project,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Project>.value(value: _project),
+        ChangeNotifierProvider<ReadOnlyLock>.value(value: _readOnlyLock),
+      ],
       child: DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -63,6 +68,10 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             actions: [
+              IconButton(
+                icon: Icon(_readOnlyLock.locked ? Icons.lock : Icons.lock_open),
+                onPressed: _toggleReadOnly,
+              ),
               IconButton(
                 icon: const Icon(Icons.save_alt),
                 onPressed: _saveProject,
@@ -80,9 +89,12 @@ class _HomePageState extends State<HomePage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: DropdownButtonFormField(
-                    onChanged: (value) {
-                      _project.target = value as Variable? ?? _project.target;
-                    },
+                    onChanged: _readOnlyLock.locked
+                        ? null
+                        : (value) {
+                            _project.target =
+                                value as Variable? ?? _project.target;
+                          },
                     value: _project.target,
                     style: Theme.of(context).textTheme.bodyText2!.copyWith(
                           color: Colors.white,
@@ -174,7 +186,7 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  void _loadProject() {
+  _loadProject() {
     FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['es', 'json'],
@@ -203,7 +215,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _saveProject() {
+  _saveProject() {
     FilePicker.platform.saveFile(
       fileName: 'project.es',
       type: FileType.custom,
@@ -243,5 +255,11 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  _toggleReadOnly() {
+    setState(() {
+      _readOnlyLock.locked = !_readOnlyLock.locked;
+    });
   }
 }
