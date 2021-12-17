@@ -24,12 +24,29 @@ class CustomView<T> extends StatelessWidget {
       children: [
         Expanded(
           child: Scaffold(
-            body: ListView.builder(
-              controller: ScrollController(),
+            body: ReorderableListView.builder(
+              scrollController: ScrollController(),
               itemCount: items.length,
               padding: const EdgeInsets.all(8),
               itemBuilder: (context, index) =>
                   itemBuilder(context, items[index]),
+              onReorder: (oldIndex, newIndex) {
+                var value = items[oldIndex];
+
+                if (newIndex > oldIndex) {
+                  for (var i = oldIndex; i < newIndex - 1; i++) {
+                    items[i] = items[i + 1];
+                  }
+
+                  items[newIndex - 1] = value;
+                } else {
+                  for (var i = oldIndex; i > newIndex; i--) {
+                    items[i] = items[i - 1];
+                  }
+
+                  items[newIndex] = value;
+                }
+              },
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: onCreate,

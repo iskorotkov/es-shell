@@ -32,6 +32,7 @@ class _VariablesViewState extends State<VariablesView> {
       sidebar: _selected != null ? _buildSidebar(project) : [],
       items: project.variables,
       itemBuilder: (_, variable) => ChangeNotifierProvider<Variable>.value(
+        key: Key(variable.uuid),
         value: variable,
         child: VariableCard(
           onTap: () {

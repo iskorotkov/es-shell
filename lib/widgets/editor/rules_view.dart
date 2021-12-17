@@ -37,6 +37,7 @@ class _RulesViewState extends State<RulesView> {
       sidebar: _selected != null ? _buildSidebar(project) : [],
       items: project.rules,
       itemBuilder: (_, rule) => ChangeNotifierProvider<Rule>.value(
+        key: Key(rule.uuid),
         value: rule,
         child: RuleCard(
           onTap: () {

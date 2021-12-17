@@ -31,6 +31,7 @@ class _DomainsViewState extends State<DomainsView> {
       sidebar: _selected != null ? _buildSidebar() : [],
       items: project.domains,
       itemBuilder: (_, domain) => ChangeNotifierProvider<Domain>.value(
+        key: Key(domain.uuid),
         value: domain,
         child: DomainCard(
           onTap: () {
