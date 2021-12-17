@@ -160,14 +160,30 @@ class _RulesViewState extends State<RulesView> {
                 child: Text('='),
               ),
               Expanded(
-                child: TextField(
-                  controller: _conditionsControllers[i],
-                  onChanged: (value) {
-                    setState(() {
-                      _selected!.conditions[i].value = value;
-                    });
-                  },
-                ),
+                child: _selected!.conditions[i].variable.domain != null
+                    ? CustomAutocomplete(
+                        items: _selected!.conditions[i].variable.domain!.values,
+                        value: _selected!.conditions[i].value,
+                        onCreateNew: (value) {
+                          _selected!.conditions[i].variable.domain!.values
+                              .add(value);
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _selected!.conditions[i].value =
+                                value?.toString() ??
+                                    _selected!.conditions[i].value;
+                          });
+                        },
+                      )
+                    : TextField(
+                        controller: _conditionsControllers[i],
+                        onChanged: (value) {
+                          setState(() {
+                            _selected!.conditions[i].value = value;
+                          });
+                        },
+                      ),
               ),
             ],
           ),
@@ -221,14 +237,29 @@ class _RulesViewState extends State<RulesView> {
                 child: Text('='),
               ),
               Expanded(
-                child: TextField(
-                  controller: _resultsControllers[i],
-                  onChanged: (value) {
-                    setState(() {
-                      _selected!.results[i].value = value;
-                    });
-                  },
-                ),
+                child: _selected!.results[i].variable.domain != null
+                    ? CustomAutocomplete(
+                        value: _selected!.results[i].value,
+                        items: _selected!.results[i].variable.domain!.values,
+                        onCreateNew: (value) {
+                          _selected!.results[i].variable.domain!.values
+                              .add(value);
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _selected!.results[i].value = value?.toString() ??
+                                _selected!.results[i].value;
+                          });
+                        },
+                      )
+                    : TextField(
+                        controller: _resultsControllers[i],
+                        onChanged: (value) {
+                          setState(() {
+                            _selected!.results[i].value = value;
+                          });
+                        },
+                      ),
               ),
             ],
           ),
