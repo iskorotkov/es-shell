@@ -96,6 +96,11 @@ class _VariablesViewState extends State<VariablesView> {
           _selected = null;
         });
       },
+      onClose: () {
+        setState(() {
+          _selected = null;
+        });
+      },
     );
   }
 

@@ -7,6 +7,7 @@ class CustomView<T> extends StatelessWidget {
   final List<T> items;
   final ItemWidgetBuilder<T> itemBuilder;
   final VoidCallback onCreate;
+  final VoidCallback onClose;
   final VoidCallback onDelete;
 
   const CustomView({
@@ -15,6 +16,7 @@ class CustomView<T> extends StatelessWidget {
     required this.items,
     required this.itemBuilder,
     required this.onCreate,
+    required this.onClose,
     required this.onDelete,
   }) : super(key: key);
 
@@ -77,12 +79,17 @@ class CustomView<T> extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
+            onPressed: onClose,
+            child: const Text('Close'),
+          ),
+          const SizedBox(height: 8),
+          ElevatedButton(
             onPressed: onDelete,
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.red),
             ),
             child: const Text('Delete'),
-          )
+          ),
         ],
       ),
     );

@@ -100,6 +100,11 @@ class _RulesViewState extends State<RulesView> {
           _selected = null;
         });
       },
+      onClose: () {
+        setState(() {
+          _selected = null;
+        });
+      },
     );
   }
 

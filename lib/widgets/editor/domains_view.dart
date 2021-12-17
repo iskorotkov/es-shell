@@ -107,6 +107,11 @@ class _DomainsViewState extends State<DomainsView> {
           _selected = null;
         });
       },
+      onClose: () {
+        setState(() {
+          _selected = null;
+        });
+      },
     );
   }
 
