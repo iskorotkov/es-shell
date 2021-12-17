@@ -75,15 +75,24 @@ class _RulesViewState extends State<RulesView> {
         ),
       ),
       onCreate: () {
-        setState(() {
-          project.rules.add(Rule(
-            uuid: const Uuid().v4(),
-            name: '',
-            description: '',
-            conditions: const [],
-            results: const [],
-          ));
-        });
+        var created = Rule(
+          uuid: const Uuid().v4(),
+          name: '',
+          description: '',
+          conditions: const [],
+          results: const [],
+        );
+
+        if (_selected == null) {
+          setState(() {
+            project.rules.add(created);
+          });
+        } else {
+          setState(() {
+            var index = project.rules.indexOf(_selected!);
+            project.rules.insert(index + 1, created);
+          });
+        }
       },
       onDelete: () {
         setState(() {

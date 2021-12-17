@@ -46,14 +46,23 @@ class _VariablesViewState extends State<VariablesView> {
         ),
       ),
       onCreate: () {
-        setState(() {
-          project.variables.add(Variable(
-            uuid: const Uuid().v4(),
-            name: '',
-            description: '',
-            dataType: DataType.int,
-          ));
-        });
+        var created = Variable(
+          uuid: const Uuid().v4(),
+          name: '',
+          description: '',
+          dataType: DataType.int,
+        );
+
+        if (_selected == null) {
+          setState(() {
+            project.variables.add(created);
+          });
+        } else {
+          setState(() {
+            var index = project.variables.indexOf(_selected!);
+            project.variables.insert(index + 1, created);
+          });
+        }
       },
       onDelete: () {
         var rulesWithVariable = project.rules.where((e) =>

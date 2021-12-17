@@ -57,15 +57,24 @@ class _DomainsViewState extends State<DomainsView> {
         ),
       ),
       onCreate: () {
-        setState(() {
-          project.domains.add(Domain(
-            uuid: const Uuid().v4(),
-            name: '',
-            description: '',
-            dataType: DataType.int,
-            values: const [],
-          ));
-        });
+        var created = Domain(
+          uuid: const Uuid().v4(),
+          name: '',
+          description: '',
+          dataType: DataType.int,
+          values: const [],
+        );
+
+        if (_selected == null) {
+          setState(() {
+            project.domains.add(created);
+          });
+        } else {
+          setState(() {
+            var index = project.domains.indexOf(_selected!);
+            project.domains.insert(index + 1, created);
+          });
+        }
       },
       onDelete: () {
         var variablesWithDomain =
