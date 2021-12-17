@@ -40,6 +40,7 @@ class _RulesViewState extends State<RulesView> {
         key: Key(rule.uuid),
         value: rule,
         child: RuleCard(
+          selected: _selected == rule,
           onTap: () {
             setState(() {
               _selected = rule;

@@ -6,8 +6,10 @@ import '../common/custom_card.dart';
 
 class RuleCard extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool selected;
 
-  const RuleCard({Key? key, this.onTap}) : super(key: key);
+  const RuleCard({Key? key, this.onTap, required this.selected})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +18,7 @@ class RuleCard extends StatelessWidget {
     return CustomCard(
       title: rule.name,
       description: rule.description,
+      selected: selected,
       firstColumnChildren: [
         const Text('IF'),
         const SizedBox(height: 4),

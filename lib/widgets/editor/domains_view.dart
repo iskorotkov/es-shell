@@ -34,6 +34,7 @@ class _DomainsViewState extends State<DomainsView> {
         key: Key(domain.uuid),
         value: domain,
         child: DomainCard(
+          selected: _selected == domain,
           onTap: () {
             setState(() {
               _selected = domain;

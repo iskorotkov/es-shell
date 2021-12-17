@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CustomCard extends StatelessWidget {
   final String title;
   final String description;
+  final bool selected;
   final List<Widget> firstColumnChildren;
   final List<Widget>? secondColumnChildren;
   final VoidCallback? onTap;
@@ -12,6 +13,7 @@ class CustomCard extends StatelessWidget {
     required this.title,
     required this.description,
     required this.firstColumnChildren,
+    this.selected = false,
     this.secondColumnChildren,
     this.onTap,
   }) : super(key: key);
@@ -21,6 +23,7 @@ class CustomCard extends StatelessWidget {
     return Card(
       elevation: 8,
       clipBehavior: Clip.antiAlias,
+      color: selected ? Theme.of(context).primaryColor : null,
       child: InkWell(
         onTap: onTap,
         child: Padding(

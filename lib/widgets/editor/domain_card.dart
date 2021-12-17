@@ -7,8 +7,10 @@ import '../common/custom_card.dart';
 
 class DomainCard extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool selected;
 
-  const DomainCard({Key? key, this.onTap}) : super(key: key);
+  const DomainCard({Key? key, this.onTap, required this.selected})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class DomainCard extends StatelessWidget {
     return CustomCard(
       title: domain.name,
       description: domain.description,
+      selected: selected,
       firstColumnChildren: [
         const Text('TYPE'),
         const SizedBox(height: 4),

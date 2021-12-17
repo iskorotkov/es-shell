@@ -7,8 +7,10 @@ import '../common/custom_card.dart';
 
 class VariableCard extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool selected;
 
-  const VariableCard({Key? key, this.onTap}) : super(key: key);
+  const VariableCard({Key? key, this.onTap, required this.selected})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class VariableCard extends StatelessWidget {
     return CustomCard(
       title: variable.name,
       description: variable.description,
+      selected: selected,
       firstColumnChildren: [
         const Text('TYPE'),
         const SizedBox(height: 4),

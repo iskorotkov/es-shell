@@ -35,6 +35,7 @@ class _VariablesViewState extends State<VariablesView> {
         key: Key(variable.uuid),
         value: variable,
         child: VariableCard(
+          selected: _selected == variable,
           onTap: () {
             setState(() {
               _selected = variable;
