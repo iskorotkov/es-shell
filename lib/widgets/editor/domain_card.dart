@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/data_type.dart';
 import '../../model/domain.dart';
 import '../common/custom_card.dart';
 
@@ -20,11 +19,7 @@ class DomainCard extends StatelessWidget {
       title: domain.name,
       description: domain.description,
       selected: selected,
-      firstColumnChildren: [
-        const Text('TYPE'),
-        const SizedBox(height: 4),
-        Text(domain.dataType.name()),
-      ],
+      firstColumnChildren: const [],
       secondColumnChildren: [
         const Text('VALUES'),
         const SizedBox(height: 4),

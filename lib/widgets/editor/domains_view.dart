@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../model/data_type.dart';
 import '../../model/domain.dart';
 import '../../model/project.dart';
 import '../common/custom_view.dart';
@@ -61,7 +60,6 @@ class _DomainsViewState extends State<DomainsView> {
           uuid: const Uuid().v4(),
           name: '',
           description: '',
-          dataType: DataType.int,
           values: const [],
         );
 
@@ -132,21 +130,6 @@ class _DomainsViewState extends State<DomainsView> {
             _selected!.description = value;
           });
         },
-      ),
-      const CustomViewHeading(text: 'Type'),
-      DropdownButtonFormField<DataType>(
-        value: _selected!.dataType,
-        onChanged: (value) {
-          setState(() {
-            _selected!.dataType = value ?? _selected!.dataType;
-          });
-        },
-        items: DataType.values
-            .map((e) => DropdownMenuItem(
-                  child: Text(e.name()),
-                  value: e,
-                ))
-            .toList(),
       ),
       CustomViewHeading(
         text: 'Values',

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../model/data_type.dart';
 import '../../model/fact.dart';
 import '../../model/project.dart';
 import '../../model/rule.dart';
@@ -156,7 +155,6 @@ class _RulesViewState extends State<RulesView> {
                         uuid: const Uuid().v4(),
                         name: value,
                         description: '',
-                        dataType: DataType.string,
                         variableType: VariableType.inferred,
                         domain: null,
                       ));
@@ -243,7 +241,6 @@ class _RulesViewState extends State<RulesView> {
                         uuid: const Uuid().v4(),
                         name: value,
                         description: '',
-                        dataType: DataType.string,
                         variableType: VariableType.inferred,
                         domain: null,
                       ));

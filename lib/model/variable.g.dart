@@ -10,8 +10,6 @@ Variable _$VariableFromJson(Map<String, dynamic> json) => Variable(
       uuid: json['uuid'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      dataType: $enumDecodeNullable(_$DataTypeEnumMap, json['dataType']) ??
-          DataType.int,
       variableType:
           $enumDecodeNullable(_$VariableTypeEnumMap, json['variableType']) ??
               VariableType.inferred,
@@ -24,15 +22,9 @@ Map<String, dynamic> _$VariableToJson(Variable instance) => <String, dynamic>{
       'uuid': instance.uuid,
       'name': instance.name,
       'description': instance.description,
-      'dataType': _$DataTypeEnumMap[instance.dataType],
       'variableType': _$VariableTypeEnumMap[instance.variableType],
       'domain': instance.domain,
     };
-
-const _$DataTypeEnumMap = {
-  DataType.string: 'string',
-  DataType.int: 'int',
-};
 
 const _$VariableTypeEnumMap = {
   VariableType.inferred: 'inferred',

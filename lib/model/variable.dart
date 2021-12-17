@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'data_type.dart';
 import 'domain.dart';
 import 'variable_type.dart';
 
@@ -13,7 +12,6 @@ class Variable extends Equatable with ChangeNotifier {
   final String uuid;
   String name;
   String description;
-  DataType dataType;
   VariableType variableType;
   Domain? domain;
 
@@ -21,7 +19,6 @@ class Variable extends Equatable with ChangeNotifier {
     required this.uuid,
     required this.name,
     required this.description,
-    this.dataType = DataType.int,
     this.variableType = VariableType.inferred,
     this.domain,
   });

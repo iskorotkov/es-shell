@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../model/data_type.dart';
 import '../../model/domain.dart';
 import '../../model/project.dart';
 import '../../model/variable.dart';
+import '../../model/variable_type.dart';
 import '../common/custom_autocomplete.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
@@ -50,7 +50,6 @@ class _VariablesViewState extends State<VariablesView> {
           uuid: const Uuid().v4(),
           name: '',
           description: '',
-          dataType: DataType.int,
         );
 
         if (_selected == null) {
@@ -123,16 +122,16 @@ class _VariablesViewState extends State<VariablesView> {
         },
       ),
       const CustomViewHeading(text: 'Type'),
-      DropdownButtonFormField<DataType>(
-        value: _selected!.dataType,
+      DropdownButtonFormField<VariableType>(
+        value: _selected!.variableType,
         onChanged: (value) {
           setState(() {
-            _selected!.dataType = value ?? _selected!.dataType;
+            _selected!.variableType = value ?? _selected!.variableType;
           });
         },
-        items: DataType.values
+        items: VariableType.values
             .map((e) => DropdownMenuItem(
-                  child: Text(e.name()),
+                  child: Text(e.uiName()),
                   value: e,
                 ))
             .toList(),
@@ -148,7 +147,6 @@ class _VariablesViewState extends State<VariablesView> {
               uuid: const Uuid().v4(),
               name: value,
               description: '',
-              dataType: DataType.string,
               values: const [],
             ));
           });

@@ -6,5 +6,14 @@ enum VariableType {
 }
 
 extension VariableTypeFormatting on VariableType {
-  String name() => toString().split(".").last;
+  String uiName() {
+    switch (this) {
+      case VariableType.inferredThenPrompted:
+        return "inferred, then prompted";
+      case VariableType.promptedThenInferred:
+        return "prompted, then inferred";
+      default:
+        return toString().split(".").last;
+    }
+  }
 }
