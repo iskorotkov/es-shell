@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/read_only_lock.dart';
+import 'reorder_items.dart';
 
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
@@ -42,7 +43,8 @@ class CustomView<T> extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     itemBuilder: (context, index) =>
                         itemBuilder(context, items[index]),
-                    onReorder: _reorderItems,
+                    onReorder: (oldIndex, newIndex) =>
+                        reorderItems(items, oldIndex, newIndex),
                   ),
             floatingActionButton: readOnlyLock.locked
                 ? null
@@ -61,50 +63,35 @@ class CustomView<T> extends StatelessWidget {
     );
   }
 
-  void _reorderItems(oldIndex, newIndex) {
-    var value = items[oldIndex];
-
-    if (newIndex > oldIndex) {
-      for (var i = oldIndex; i < newIndex - 1; i++) {
-        items[i] = items[i + 1];
-      }
-
-      items[newIndex - 1] = value;
-    } else {
-      for (var i = oldIndex; i > newIndex; i--) {
-        items[i] = items[i - 1];
-      }
-
-      items[newIndex] = value;
-    }
-  }
-
   Widget _buildToolbar(BuildContext context) {
     return Material(
       elevation: 32,
-      child: ListView(
+      child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        children: [
-          ...sidebar.map(
-            (child) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: child,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ...sidebar.map(
+              (child) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: child,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: onClose,
-            child: const Text('Close'),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: onDelete,
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.red),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: onClose,
+              child: const Text('Close'),
             ),
-            child: const Text('Delete'),
-          ),
-        ],
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: onDelete,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.red),
+              ),
+              child: const Text('Delete'),
+            ),
+          ],
+        ),
       ),
     );
   }

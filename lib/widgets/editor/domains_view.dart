@@ -1,3 +1,4 @@
+import 'package:es_shell/widgets/common/reorder_items.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -140,30 +141,48 @@ class _DomainsViewState extends State<DomainsView> {
           });
         },
       ),
-      for (var i = 0; i < _selected!.values.length; i++)
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _valuesControllers[i],
-                onChanged: (value) {
-                  setState(() {
-                    _selected!.values[i] = value;
-                    _selected!.values = _selected!.values;
-                  });
-                },
+      ReorderableListView.builder(
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return Row(
+            key: Key(index.toString()),
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _valuesControllers[index],
+                  onChanged: (value) {
+                    setState(() {
+                      _selected!.values[index] = value;
+                      _selected!.values = _selected!.values;
+                    });
+                  },
+                ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () {
-                setState(() {
-                  _selected!.values.removeAt(i);
-                });
-              },
-            ),
-          ],
-        )
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
+                child: IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: () {
+                    setState(() {
+                      _selected!.values.removeAt(index);
+                    });
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+        itemCount: _selected!.values.length,
+        onReorder: (oldIndex, newIndex) {
+          var values = [..._selected!.values];
+          reorderItems(values, oldIndex, newIndex);
+          _selected!.values = values;
+
+          setState(() {
+            reorderItems(_valuesControllers, oldIndex, newIndex);
+          });
+        },
+      ),
     ];
   }
 }
