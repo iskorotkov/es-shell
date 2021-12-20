@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'model/project.dart';
-import 'model/variable.dart';
 import 'sample_project.dart';
 import 'utils/read_only_lock.dart';
 import 'widgets/editor/domains_view.dart';
 import 'widgets/editor/rules_view.dart';
+import 'widgets/editor/target_variable_selector.dart';
 import 'widgets/editor/variables_view.dart';
 import 'widgets/infer/infer_view.dart';
 
@@ -84,30 +84,11 @@ class _HomePageState extends State<HomePage> {
                 icon: const Icon(Icons.fast_forward),
                 onPressed: () => _infer(context),
               ),
-              SizedBox(
-                width: 250,
+              const SizedBox(
+                width: 300,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: DropdownButtonFormField(
-                    onChanged: _readOnlyLock.locked
-                        ? null
-                        : (value) {
-                            _project.target =
-                                value as Variable? ?? _project.target;
-                          },
-                    value: _project.target,
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                          color: Colors.white,
-                        ),
-                    dropdownColor: Theme.of(context).primaryColor,
-                    items: _project.variables
-                        .map((e) => DropdownMenuItem(
-                              key: Key(e.uuid),
-                              value: e,
-                              child: Text(e.name),
-                            ))
-                        .toList(),
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: TargetVariableSelector(),
                 ),
               ),
             ],
