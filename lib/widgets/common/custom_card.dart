@@ -43,11 +43,11 @@ class CustomCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                     Text(
                       description,
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: Theme.of(context).textTheme.caption,
                     ),
                   ],
                 ),
