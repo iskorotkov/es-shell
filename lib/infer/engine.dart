@@ -70,6 +70,8 @@ class Engine {
         log('setting value of variable ${result.variable}');
         memory.variables[result.variable] = result.value;
       }
+
+      return;
     }
   }
 }
