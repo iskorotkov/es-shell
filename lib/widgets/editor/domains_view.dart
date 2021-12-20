@@ -102,7 +102,8 @@ class _DomainsViewState extends State<DomainsView> {
         }
 
         setState(() {
-          project.domains.remove(_selected);
+          project.domains =
+              project.domains.where((element) => element == _selected).toList();
           _selected = null;
         });
       },
@@ -136,7 +137,7 @@ class _DomainsViewState extends State<DomainsView> {
         text: 'Values',
         onAdd: () {
           setState(() {
-            _selected!.values.add('');
+            _selected!.values = [..._selected!.values, ''];
             _valuesControllers.add(TextEditingController());
           });
         },
@@ -152,8 +153,9 @@ class _DomainsViewState extends State<DomainsView> {
                   controller: _valuesControllers[index],
                   onChanged: (value) {
                     setState(() {
-                      _selected!.values[index] = value;
-                      _selected!.values = _selected!.values;
+                      _selected!.values = _selected!.values
+                          .map((e) => e == _selected!.values[index] ? value : e)
+                          .toList();
                     });
                   },
                 ),
