@@ -129,11 +129,14 @@ class _RulesViewState extends State<RulesView> {
         text: 'Conditions',
         onAdd: () {
           setState(() {
-            _selected!.conditions.add(Fact(
-              uuid: const Uuid().v4(),
-              variable: project.variables.first,
-              value: '',
-            ));
+            _selected!.conditions = [
+              ..._selected!.conditions,
+              Fact(
+                uuid: const Uuid().v4(),
+                variable: project.variables.first,
+                value: '',
+              )
+            ];
 
             _conditionsControllers.add(TextEditingController());
           });
@@ -151,13 +154,16 @@ class _RulesViewState extends State<RulesView> {
                   items: project.variables.map((e) => e.name),
                   onCreateNew: (value) {
                     setState(() {
-                      project.variables.add(Variable(
-                        uuid: const Uuid().v4(),
-                        name: value,
-                        description: '',
-                        variableType: VariableType.inferred,
-                        domain: null,
-                      ));
+                      project.variables = [
+                        ...project.variables,
+                        Variable(
+                          uuid: const Uuid().v4(),
+                          name: value,
+                          description: '',
+                          variableType: VariableType.inferred,
+                          domain: null,
+                        )
+                      ];
                     });
                   },
                   onChanged: (value) {
@@ -178,8 +184,10 @@ class _RulesViewState extends State<RulesView> {
                         items: _selected!.conditions[i].variable.domain!.values,
                         value: _selected!.conditions[i].value,
                         onCreateNew: (value) {
-                          _selected!.conditions[i].variable.domain!.values
-                              .add(value);
+                          _selected!.conditions[i].variable.domain!.values = [
+                            ..._selected!.conditions[i].variable.domain!.values,
+                            value
+                          ];
                         },
                         onChanged: (value) {
                           setState(() {
@@ -215,11 +223,17 @@ class _RulesViewState extends State<RulesView> {
         text: 'Results',
         onAdd: () {
           setState(() {
-            _selected!.results.add(Fact(
-              uuid: const Uuid().v4(),
-              variable: project.variables.first,
-              value: '',
-            ));
+            _selected!.results = [
+              ..._selected!.results,
+              Fact(
+                uuid: const Uuid().v4(),
+                variable: project.variables
+                    .where((element) =>
+                        element.variableType != VariableType.prompted)
+                    .first,
+                value: '',
+              )
+            ];
 
             _resultsControllers.add(TextEditingController());
           });
@@ -239,13 +253,16 @@ class _RulesViewState extends State<RulesView> {
                       .map((e) => e.name),
                   onCreateNew: (value) {
                     setState(() {
-                      project.variables.add(Variable(
-                        uuid: const Uuid().v4(),
-                        name: value,
-                        description: '',
-                        variableType: VariableType.inferred,
-                        domain: null,
-                      ));
+                      project.variables = [
+                        ...project.variables,
+                        Variable(
+                          uuid: const Uuid().v4(),
+                          name: value,
+                          description: '',
+                          variableType: VariableType.inferred,
+                          domain: null,
+                        )
+                      ];
                     });
                   },
                   onChanged: (value) {
@@ -266,8 +283,10 @@ class _RulesViewState extends State<RulesView> {
                         value: _selected!.results[i].value,
                         items: _selected!.results[i].variable.domain!.values,
                         onCreateNew: (value) {
-                          _selected!.results[i].variable.domain!.values
-                              .add(value);
+                          _selected!.results[i].variable.domain!.values = [
+                            ..._selected!.results[i].variable.domain!.values,
+                            value
+                          ];
                         },
                         onChanged: (value) {
                           setState(() {

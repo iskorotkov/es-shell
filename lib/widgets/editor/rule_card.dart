@@ -23,14 +23,22 @@ class RuleCard extends StatelessWidget {
         const Text('IF'),
         const SizedBox(height: 4),
         ...rule.conditions
-            .map((e) => Text('${e.variable.name} = ${e.value}'))
+            .map((e) => Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+                  child: Text('- ${e.variable.name} = ${e.value}'),
+                ))
             .toList(),
       ],
       secondColumnChildren: [
         const Text('THEN'),
         const SizedBox(height: 4),
         ...rule.results
-            .map((e) => Text('${e.variable.name} = ${e.value}'))
+            .map((e) => Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+                  child: Text('- ${e.variable.name} = ${e.value}'),
+                ))
             .toList(),
       ],
       onTap: onTap,

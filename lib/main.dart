@@ -183,8 +183,32 @@ class _HomePageState extends State<HomePage> {
         var file = File(value.paths.first!);
         file.readAsString().then((value) {
           try {
+            var loaded = Project.fromJson(jsonDecode(value));
+
+            for (var variable in loaded.variables) {
+              if (variable.domain != null) {
+                variable.domain = loaded.domains.firstWhere(
+                    (element) => element.uuid == variable.domain?.uuid);
+              }
+            }
+
+            for (var rule in loaded.rules) {
+              for (var condition in rule.conditions) {
+                condition.variable = loaded.variables.firstWhere(
+                    (element) => element.uuid == condition.variable.uuid);
+              }
+
+              for (var result in rule.results) {
+                result.variable = loaded.variables.firstWhere(
+                    (element) => element.uuid == result.variable.uuid);
+              }
+            }
+
+            loaded.target = loaded.variables
+                .firstWhere((e) => e.uuid == loaded.target.uuid);
+
             setState(() {
-              _project = Project.fromJson(jsonDecode(value));
+              _project = loaded;
             });
           } catch (e) {
             log('error decoding project: $e');

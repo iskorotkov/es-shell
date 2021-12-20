@@ -19,11 +19,10 @@ class DomainCard extends StatelessWidget {
       title: domain.name,
       description: domain.description,
       selected: selected,
-      firstColumnChildren: const [],
-      secondColumnChildren: [
+      firstColumnChildren: [
         const Text('VALUES'),
         const SizedBox(height: 4),
-        ...domain.values.map((e) => Text(e.toString())).toList(),
+        ...domain.values.map((e) => Text('- $e')).toList(),
       ],
       onTap: onTap,
     );

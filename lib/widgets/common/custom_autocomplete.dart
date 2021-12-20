@@ -36,7 +36,8 @@ class _CustomAutocompleteState extends State<CustomAutocomplete> {
           return [nullItemText].followedBy(widget.items);
         }
 
-        var names = widget.items.where((e) => e.contains(text));
+        var names = widget.items
+            .where((e) => e.toLowerCase().contains(text.toLowerCase()));
         if (text.isNotEmpty && !names.contains(text)) {
           names = names.followedBy(['$newItemText$text']);
         }
