@@ -66,32 +66,30 @@ class CustomView<T> extends StatelessWidget {
   Widget _buildToolbar(BuildContext context) {
     return Material(
       elevation: 32,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ...sidebar.map(
-              (child) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: child,
-              ),
+      child: ListView(
+        controller: ScrollController(),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+        children: [
+          ...sidebar.map(
+            (child) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: child,
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: onClose,
-              child: const Text('Close'),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onClose,
+            child: const Text('Close'),
+          ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: onDelete,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.red),
             ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: onDelete,
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.red),
-              ),
-              child: const Text('Delete'),
-            ),
-          ],
-        ),
+            child: const Text('Delete'),
+          ),
+        ],
       ),
     );
   }
