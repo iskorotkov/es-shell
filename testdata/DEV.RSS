@@ -443,7 +443,7 @@ VAR: gameids
 
 VAR: visual
     FIND: PERFORM PROC1 USING "DEVQF1","11","visual","2"
-    LABEL: ОТНОШЕНИЕ В ВИЗУАЛИЗАЦИИ
+    LABEL: ОТНОШЕНИЕ К ВИЗУАЛИЗАЦИИ
 
 VAR: visaf
     LABEL: ПРЕДРАСПОЛОЖЕННОСТЬ К ВИЗУАЛИЗАЦИИ
