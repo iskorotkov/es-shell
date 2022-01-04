@@ -14,6 +14,7 @@ import 'variable_card.dart';
 class VariablesView extends StatefulWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController questionController = TextEditingController();
 
   VariablesView({Key? key}) : super(key: key);
 
@@ -41,16 +42,14 @@ class _VariablesViewState extends State<VariablesView> {
               _selected = variable;
               widget.nameController.text = variable.name;
               widget.descriptionController.text = variable.description;
+              widget.questionController.text = variable.question ?? '';
             });
           },
         ),
       ),
       onCreate: () {
         var created = Variable(
-          uuid: const Uuid().v4(),
-          name: '',
-          description: '',
-        );
+            uuid: const Uuid().v4(), name: '', description: '', question: '');
 
         if (_selected == null) {
           project.variables = [...project.variables, created];
@@ -138,6 +137,12 @@ class _VariablesViewState extends State<VariablesView> {
         controller: widget.descriptionController,
         onChanged: (value) {
           _selected!.description = value;
+        },
+      ),
+      TextField(
+        controller: widget.questionController,
+        onChanged: (value) {
+          _selected!.question = value;
         },
       ),
       const CustomViewHeading(text: 'Type'),

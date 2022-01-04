@@ -11,6 +11,7 @@ class Variable with ChangeNotifier {
   final String uuid;
   String _name;
   String _description;
+  String? _question;
   VariableType _variableType;
   Domain? _domain;
 
@@ -18,10 +19,12 @@ class Variable with ChangeNotifier {
     required this.uuid,
     required String name,
     required String description,
+    String? question,
     VariableType variableType = VariableType.inferred,
     Domain? domain,
   })  : _name = name,
         _description = description,
+        _question = question,
         _variableType = variableType,
         _domain = domain;
 
@@ -35,6 +38,10 @@ class Variable with ChangeNotifier {
     notifyListeners();
   }
 
+  String questionOrDefault() {
+    return question ?? '$name?';
+  }
+
   Domain? get domain => _domain;
 
   set domain(Domain? domain) {
@@ -46,6 +53,13 @@ class Variable with ChangeNotifier {
 
   set name(String name) {
     _name = name;
+    notifyListeners();
+  }
+
+  String? get question => _question;
+
+  set question(String? question) {
+    _question = question;
     notifyListeners();
   }
 

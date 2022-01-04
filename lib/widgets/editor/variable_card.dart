@@ -19,6 +19,7 @@ class VariableCard extends StatelessWidget {
     return CustomCard(
       title: variable.name,
       description: variable.description,
+      question: variable.questionOrDefault(),
       selected: selected,
       firstColumnChildren: [
         const Text('TYPE'),

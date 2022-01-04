@@ -6,6 +6,7 @@ import '../../utils/read_only_lock.dart';
 class CustomCard extends StatelessWidget {
   final String title;
   final String description;
+  final String? question;
   final bool selected;
   final List<Widget> firstColumnChildren;
   final List<Widget>? secondColumnChildren;
@@ -15,6 +16,7 @@ class CustomCard extends StatelessWidget {
     Key? key,
     required this.title,
     required this.description,
+    this.question,
     required this.firstColumnChildren,
     this.selected = false,
     this.secondColumnChildren,
@@ -49,6 +51,11 @@ class CustomCard extends StatelessWidget {
                       description,
                       style: Theme.of(context).textTheme.caption,
                     ),
+                    if (question != null)
+                      Text(
+                        question!,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
                   ],
                 ),
               ),

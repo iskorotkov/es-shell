@@ -17,11 +17,6 @@ class ClosedQuestionCard extends QuestionCard {
 class _ClosedQuestionCardState extends State<ClosedQuestionCard> {
   @override
   Widget build(BuildContext context) {
-    var questionText = widget.question.variable.description;
-    if (questionText == "") {
-      questionText = widget.question.variable.name;
-    }
-
     return Card(
       elevation: 8,
       child: Padding(
@@ -29,7 +24,7 @@ class _ClosedQuestionCardState extends State<ClosedQuestionCard> {
         child: Row(
           children: [
             Expanded(
-              child: Text('$questionText?'),
+              child: Text(widget.question.variable.questionOrDefault()),
             ),
             Expanded(
               child: Row(
