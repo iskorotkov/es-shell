@@ -89,9 +89,9 @@ class _RulesViewState extends State<RulesView> {
         } else {
           var index = project.rules.indexOf(_selected!);
           project.rules = [
-            ...project.rules.sublist(0, index),
+            ...project.rules.sublist(0, index + 1),
             created,
-            ...project.rules.sublist(index)
+            ...project.rules.sublist(index + 1)
           ];
         }
       },

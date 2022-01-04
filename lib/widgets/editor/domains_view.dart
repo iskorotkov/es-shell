@@ -71,9 +71,9 @@ class _DomainsViewState extends State<DomainsView> {
         } else {
           var index = project.domains.indexOf(_selected!);
           project.domains = [
-            ...project.domains.sublist(0, index),
+            ...project.domains.sublist(0, index + 1),
             created,
-            ...project.domains.sublist(index)
+            ...project.domains.sublist(index + 1)
           ];
         }
       },

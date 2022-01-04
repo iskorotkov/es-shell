@@ -61,9 +61,9 @@ class _VariablesViewState extends State<VariablesView> {
         } else {
           var index = project.variables.indexOf(_selected!);
           project.variables = [
-            ...project.variables.sublist(0, index),
+            ...project.variables.sublist(0, index + 1),
             created,
-            ...project.variables.sublist(index)
+            ...project.variables.sublist(index + 1)
           ];
         }
       },
