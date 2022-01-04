@@ -28,7 +28,9 @@ class VariableCard extends StatelessWidget {
       secondColumnChildren: [
         const Text('DOMAIN'),
         const SizedBox(height: 4),
-        Text(variable.domain?.name ?? '-'),
+        Text(variable.domain != null
+            ? '${variable.domain!.name} (${variable.domain!.values.join("; ")})'
+            : '-'),
       ],
       onTap: onTap,
     );

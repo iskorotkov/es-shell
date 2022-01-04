@@ -26,7 +26,7 @@ class RuleCard extends StatelessWidget {
             .map((e) => Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-                  child: Text('- ${e.variable.name} = ${e.value}'),
+                  child: Text('• ${e.variable.name} = ${e.value}'),
                 ))
             .toList(),
       ],
@@ -37,7 +37,7 @@ class RuleCard extends StatelessWidget {
             .map((e) => Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
-                  child: Text('- ${e.variable.name} = ${e.value}'),
+                  child: Text('• ${e.variable.name} = ${e.value}'),
                 ))
             .toList(),
       ],
