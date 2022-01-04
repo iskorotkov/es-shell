@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -7,7 +6,7 @@ import 'variable.dart';
 part 'fact.g.dart';
 
 @JsonSerializable()
-class Fact extends Equatable with ChangeNotifier {
+class Fact with ChangeNotifier {
   final String uuid;
   Variable variable;
   String value;
@@ -19,9 +18,6 @@ class Fact extends Equatable with ChangeNotifier {
   });
 
   factory Fact.fromJson(Map<String, dynamic> json) => _$FactFromJson(json);
-
-  @override
-  List<Object?> get props => [uuid];
 
   Map<String, dynamic> toJson() => _$FactToJson(this);
 
