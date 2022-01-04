@@ -29,7 +29,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(title: 'ES Shell'),
+      home: HomePage(title: 'ES Shell'),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -37,8 +37,9 @@ class App extends StatelessWidget {
 
 class HomePage extends StatefulWidget {
   final String title;
+  final ReadOnlyLock _readOnlyLock = ReadOnlyLock(true);
 
-  const HomePage({Key? key, required this.title}) : super(key: key);
+  HomePage({Key? key, required this.title}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -46,14 +47,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Project _project = createSampleProject();
-  final ReadOnlyLock _readOnlyLock = ReadOnlyLock(true);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<Project>.value(value: _project),
-        ChangeNotifierProvider<ReadOnlyLock>.value(value: _readOnlyLock),
+        ChangeNotifierProvider<ReadOnlyLock>.value(value: widget._readOnlyLock),
       ],
       child: DefaultTabController(
         length: 3,
@@ -68,20 +68,25 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             actions: [
+              Builder(builder: (context) {
+                var lock = context.watch<ReadOnlyLock>();
+                return IconButton(
+                  icon: Icon(lock.locked ? Icons.lock : Icons.lock_open),
+                  onPressed: () {
+                    lock.toggle();
+                  },
+                );
+              }),
               IconButton(
-                icon: Icon(_readOnlyLock.locked ? Icons.lock : Icons.lock_open),
-                onPressed: _readOnlyLock.toggle,
-              ),
-              IconButton(
-                icon: const Icon(Icons.save_alt),
+                icon: const Icon(Icons.file_download),
                 onPressed: _saveProject,
               ),
               IconButton(
-                icon: const Icon(Icons.open_in_browser),
+                icon: const Icon(Icons.file_upload),
                 onPressed: _loadProject,
               ),
               IconButton(
-                icon: const Icon(Icons.fast_forward),
+                icon: const Icon(Icons.play_arrow),
                 onPressed: () => _infer(context),
               ),
               const SizedBox(

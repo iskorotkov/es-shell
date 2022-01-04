@@ -14,6 +14,6 @@ Fact _$FactFromJson(Map<String, dynamic> json) => Fact(
 
 Map<String, dynamic> _$FactToJson(Fact instance) => <String, dynamic>{
       'uuid': instance.uuid,
-      'variable': instance.variable,
       'value': instance.value,
+      'variable': instance.variable,
     };

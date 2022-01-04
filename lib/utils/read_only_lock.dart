@@ -5,20 +5,20 @@ class ReadOnlyLock with ChangeNotifier {
 
   ReadOnlyLock(bool locked) : _locked = locked;
 
-  get locked => _locked;
+  bool get locked => _locked;
 
   lock() {
     _locked = true;
     notifyListeners();
   }
 
-  unlock() {
-    _locked = false;
+  toggle() {
+    _locked = !_locked;
     notifyListeners();
   }
 
-  toggle() {
-    _locked = !_locked;
+  unlock() {
+    _locked = false;
     notifyListeners();
   }
 }

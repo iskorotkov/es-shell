@@ -20,8 +20,8 @@ Rule _$RuleFromJson(Map<String, dynamic> json) => Rule(
 
 Map<String, dynamic> _$RuleToJson(Rule instance) => <String, dynamic>{
       'uuid': instance.uuid,
-      'name': instance.name,
-      'description': instance.description,
       'conditions': instance.conditions,
+      'description': instance.description,
+      'name': instance.name,
       'results': instance.results,
     };

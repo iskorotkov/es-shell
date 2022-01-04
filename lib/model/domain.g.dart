@@ -16,7 +16,7 @@ Domain _$DomainFromJson(Map<String, dynamic> json) => Domain(
 
 Map<String, dynamic> _$DomainToJson(Domain instance) => <String, dynamic>{
       'uuid': instance.uuid,
-      'name': instance.name,
       'description': instance.description,
+      'name': instance.name,
       'values': instance.values,
     };

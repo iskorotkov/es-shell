@@ -8,20 +8,51 @@ part 'rule.g.dart';
 @JsonSerializable()
 class Rule with ChangeNotifier {
   final String uuid;
-  String name;
-  String description;
-  List<Fact> conditions;
-  List<Fact> results;
+  String _name;
+  String _description;
+  List<Fact> _conditions;
+  List<Fact> _results;
 
   Rule({
     required this.uuid,
-    required this.name,
-    required this.description,
-    required this.conditions,
-    required this.results,
-  });
+    required String name,
+    required String description,
+    required List<Fact> conditions,
+    required List<Fact> results,
+  })  : _name = name,
+        _description = description,
+        _conditions = conditions,
+        _results = results;
 
   factory Rule.fromJson(Map<String, dynamic> json) => _$RuleFromJson(json);
+
+  List<Fact> get conditions => _conditions;
+
+  set conditions(List<Fact> conditions) {
+    _conditions = conditions;
+    notifyListeners();
+  }
+
+  String get description => _description;
+
+  set description(String description) {
+    _description = description;
+    notifyListeners();
+  }
+
+  String get name => _name;
+
+  set name(String name) {
+    _name = name;
+    notifyListeners();
+  }
+
+  List<Fact> get results => _results;
+
+  set results(List<Fact> results) {
+    _results = results;
+    notifyListeners();
+  }
 
   Map<String, dynamic> toJson() => _$RuleToJson(this);
 

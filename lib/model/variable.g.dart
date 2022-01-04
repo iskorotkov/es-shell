@@ -20,10 +20,10 @@ Variable _$VariableFromJson(Map<String, dynamic> json) => Variable(
 
 Map<String, dynamic> _$VariableToJson(Variable instance) => <String, dynamic>{
       'uuid': instance.uuid,
-      'name': instance.name,
       'description': instance.description,
-      'variableType': _$VariableTypeEnumMap[instance.variableType],
       'domain': instance.domain,
+      'name': instance.name,
+      'variableType': _$VariableTypeEnumMap[instance.variableType],
     };
 
 const _$VariableTypeEnumMap = {

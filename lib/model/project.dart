@@ -10,21 +10,52 @@ part 'project.g.dart';
 @JsonSerializable()
 class Project with ChangeNotifier {
   final String uuid;
-  List<Domain> domains;
-  List<Variable> variables;
-  List<Rule> rules;
-  Variable target;
+  List<Domain> _domains;
+  List<Variable> _variables;
+  List<Rule> _rules;
+  Variable _target;
 
   Project({
     required this.uuid,
-    required this.domains,
-    required this.variables,
-    required this.rules,
-    required this.target,
-  });
+    required List<Domain> domains,
+    required List<Variable> variables,
+    required List<Rule> rules,
+    required Variable target,
+  })  : _domains = domains,
+        _variables = variables,
+        _rules = rules,
+        _target = target;
 
   factory Project.fromJson(Map<String, dynamic> json) =>
       _$ProjectFromJson(json);
+
+  List<Domain> get domains => _domains;
+
+  set domains(List<Domain> domains) {
+    _domains = domains;
+    notifyListeners();
+  }
+
+  List<Rule> get rules => _rules;
+
+  set rules(List<Rule> rules) {
+    _rules = rules;
+    notifyListeners();
+  }
+
+  Variable get target => _target;
+
+  set target(Variable target) {
+    _target = target;
+    notifyListeners();
+  }
+
+  List<Variable> get variables => _variables;
+
+  set variables(List<Variable> variables) {
+    _variables = variables;
+    notifyListeners();
+  }
 
   Map<String, dynamic> toJson() => _$ProjectToJson(this);
 

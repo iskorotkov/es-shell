@@ -9,21 +9,52 @@ part 'variable.g.dart';
 @JsonSerializable()
 class Variable with ChangeNotifier {
   final String uuid;
-  String name;
-  String description;
-  VariableType variableType;
-  Domain? domain;
+  String _name;
+  String _description;
+  VariableType _variableType;
+  Domain? _domain;
 
   Variable({
     required this.uuid,
-    required this.name,
-    required this.description,
-    this.variableType = VariableType.inferred,
-    this.domain,
-  });
+    required String name,
+    required String description,
+    VariableType variableType = VariableType.inferred,
+    Domain? domain,
+  })  : _name = name,
+        _description = description,
+        _variableType = variableType,
+        _domain = domain;
 
   factory Variable.fromJson(Map<String, dynamic> json) =>
       _$VariableFromJson(json);
+
+  String get description => _description;
+
+  set description(String description) {
+    _description = description;
+    notifyListeners();
+  }
+
+  Domain? get domain => _domain;
+
+  set domain(Domain? domain) {
+    _domain = domain;
+    notifyListeners();
+  }
+
+  String get name => _name;
+
+  set name(String name) {
+    _name = name;
+    notifyListeners();
+  }
+
+  VariableType get variableType => _variableType;
+
+  set variableType(VariableType vt) {
+    _variableType = vt;
+    notifyListeners();
+  }
 
   Map<String, dynamic> toJson() => _$VariableToJson(this);
 

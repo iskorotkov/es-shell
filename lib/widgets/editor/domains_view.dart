@@ -65,14 +65,14 @@ class _DomainsViewState extends State<DomainsView> {
         );
 
         if (_selected == null) {
-          setState(() {
-            project.domains.add(created);
-          });
+          project.domains = [...project.domains, created];
         } else {
-          setState(() {
-            var index = project.domains.indexOf(_selected!);
-            project.domains.insert(index + 1, created);
-          });
+          var index = project.domains.indexOf(_selected!);
+          project.domains = [
+            ...project.domains.sublist(0, index),
+            created,
+            ...project.domains.sublist(index)
+          ];
         }
       },
       onDelete: () {
@@ -101,9 +101,10 @@ class _DomainsViewState extends State<DomainsView> {
           return;
         }
 
+        project.domains =
+            project.domains.where((element) => element == _selected).toList();
+
         setState(() {
-          project.domains =
-              project.domains.where((element) => element == _selected).toList();
           _selected = null;
         });
       },
@@ -120,24 +121,20 @@ class _DomainsViewState extends State<DomainsView> {
       TextField(
         controller: widget._nameController,
         onChanged: (value) {
-          setState(() {
-            _selected!.name = value;
-          });
+          _selected!.name = value;
         },
       ),
       TextField(
         controller: widget._descriptionController,
         onChanged: (value) {
-          setState(() {
-            _selected!.description = value;
-          });
+          _selected!.description = value;
         },
       ),
       CustomViewHeading(
         text: 'Values',
         onAdd: () {
+          _selected!.values = [..._selected!.values, ''];
           setState(() {
-            _selected!.values = [..._selected!.values, ''];
             _valuesControllers.add(TextEditingController());
           });
         },
@@ -152,11 +149,9 @@ class _DomainsViewState extends State<DomainsView> {
                 child: TextField(
                   controller: _valuesControllers[index],
                   onChanged: (value) {
-                    setState(() {
-                      _selected!.values = _selected!.values
-                          .map((e) => e == _selected!.values[index] ? value : e)
-                          .toList();
-                    });
+                    _selected!.values = _selected!.values
+                        .map((e) => e == _selected!.values[index] ? value : e)
+                        .toList();
                   },
                 ),
               ),
@@ -165,9 +160,10 @@ class _DomainsViewState extends State<DomainsView> {
                 child: IconButton(
                   icon: const Icon(Icons.delete_outline),
                   onPressed: () {
-                    setState(() {
-                      _selected!.values.removeAt(index);
-                    });
+                    _selected!.values = [
+                      ..._selected!.values.sublist(0, index),
+                      ..._selected!.values.sublist(index + 1)
+                    ];
                   },
                 ),
               ),

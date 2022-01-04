@@ -53,14 +53,14 @@ class _VariablesViewState extends State<VariablesView> {
         );
 
         if (_selected == null) {
-          setState(() {
-            project.variables.add(created);
-          });
+          project.variables = [...project.variables, created];
         } else {
-          setState(() {
-            var index = project.variables.indexOf(_selected!);
-            project.variables.insert(index + 1, created);
-          });
+          var index = project.variables.indexOf(_selected!);
+          project.variables = [
+            ...project.variables.sublist(0, index),
+            created,
+            ...project.variables.sublist(index)
+          ];
         }
       },
       onDelete: () {
@@ -111,8 +111,10 @@ class _VariablesViewState extends State<VariablesView> {
           return;
         }
 
+        project.variables =
+            project.variables.where((element) => element != _selected).toList();
+
         setState(() {
-          project.variables.remove(_selected);
           _selected = null;
         });
       },
@@ -129,26 +131,20 @@ class _VariablesViewState extends State<VariablesView> {
       TextField(
         controller: widget.nameController,
         onChanged: (value) {
-          setState(() {
-            _selected!.name = value;
-          });
+          _selected!.name = value;
         },
       ),
       TextField(
         controller: widget.descriptionController,
         onChanged: (value) {
-          setState(() {
-            _selected!.description = value;
-          });
+          _selected!.description = value;
         },
       ),
       const CustomViewHeading(text: 'Type'),
       DropdownButtonFormField<VariableType>(
         value: _selected!.variableType,
         onChanged: (value) {
-          setState(() {
-            _selected!.variableType = value ?? _selected!.variableType;
-          });
+          _selected!.variableType = value ?? _selected!.variableType;
         },
         items: VariableType.values
             .map((e) => DropdownMenuItem(
@@ -163,21 +159,20 @@ class _VariablesViewState extends State<VariablesView> {
         items: project.domains.map((e) => e.name),
         optional: true,
         onCreateNew: (value) {
-          setState(() {
-            project.domains.add(Domain(
+          project.domains = [
+            ...project.domains,
+            Domain(
               uuid: const Uuid().v4(),
               name: value,
               description: '',
               values: const [],
-            ));
-          });
+            )
+          ];
         },
         onChanged: (value) {
-          setState(() {
-            _selected!.domain = value == null
-                ? null
-                : project.domains.firstWhere((e) => e.name == value);
-          });
+          _selected!.domain = value == null
+              ? null
+              : project.domains.firstWhere((e) => e.name == value);
         },
       ),
     ];

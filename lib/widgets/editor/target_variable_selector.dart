@@ -17,7 +17,9 @@ class TargetVariableSelector extends StatelessWidget {
     return DropdownButtonFormField(
       onChanged: lock.locked
           ? null
-          : (value) => project.target = value as Variable? ?? project.target,
+          : (value) {
+              project.target = value as Variable? ?? project.target;
+            },
       value: project.target,
       style: Theme.of(context).textTheme.bodyText2!.copyWith(
             color: Colors.white,

@@ -83,21 +83,20 @@ class _RulesViewState extends State<RulesView> {
         );
 
         if (_selected == null) {
-          setState(() {
-            project.rules.add(created);
-          });
+          project.rules = [...project.rules, created];
         } else {
-          setState(() {
-            var index = project.rules.indexOf(_selected!);
-            project.rules.insert(index + 1, created);
-          });
+          var index = project.rules.indexOf(_selected!);
+          project.rules = [
+            ...project.rules.sublist(0, index),
+            created,
+            ...project.rules.sublist(index)
+          ];
         }
       },
       onDelete: () {
-        setState(() {
-          project.rules.remove(_selected);
-          _selected = null;
-        });
+        project.rules =
+            project.rules.where((element) => element != _selected).toList();
+        _selected = null;
       },
       onClose: () {
         setState(() {
@@ -112,32 +111,28 @@ class _RulesViewState extends State<RulesView> {
       TextField(
         controller: widget.nameController,
         onChanged: (value) {
-          setState(() {
-            _selected!.name = value;
-          });
+          _selected!.name = value;
         },
       ),
       TextField(
         controller: widget.descriptionController,
         onChanged: (value) {
-          setState(() {
-            _selected!.description = value;
-          });
+          _selected!.description = value;
         },
       ),
       CustomViewHeading(
         text: 'Conditions',
         onAdd: () {
-          setState(() {
-            _selected!.conditions = [
-              ..._selected!.conditions,
-              Fact(
-                uuid: const Uuid().v4(),
-                variable: project.variables.first,
-                value: '',
-              )
-            ];
+          _selected!.conditions = [
+            ..._selected!.conditions,
+            Fact(
+              uuid: const Uuid().v4(),
+              variable: project.variables.first,
+              value: '',
+            )
+          ];
 
+          setState(() {
             _conditionsControllers.add(TextEditingController());
           });
         },
@@ -153,24 +148,20 @@ class _RulesViewState extends State<RulesView> {
                   value: _selected!.conditions[i].variable.name,
                   items: project.variables.map((e) => e.name),
                   onCreateNew: (value) {
-                    setState(() {
-                      project.variables = [
-                        ...project.variables,
-                        Variable(
-                          uuid: const Uuid().v4(),
-                          name: value,
-                          description: '',
-                          variableType: VariableType.inferred,
-                          domain: null,
-                        )
-                      ];
-                    });
+                    project.variables = [
+                      ...project.variables,
+                      Variable(
+                        uuid: const Uuid().v4(),
+                        name: value,
+                        description: '',
+                        variableType: VariableType.inferred,
+                        domain: null,
+                      )
+                    ];
                   },
                   onChanged: (value) {
-                    setState(() {
-                      _selected!.conditions[i].variable =
-                          project.variables.firstWhere((e) => e.name == value);
-                    });
+                    _selected!.conditions[i].variable =
+                        project.variables.firstWhere((e) => e.name == value);
                   },
                 ),
               ),
@@ -190,30 +181,24 @@ class _RulesViewState extends State<RulesView> {
                           ];
                         },
                         onChanged: (value) {
-                          setState(() {
-                            _selected!.conditions[i].value =
-                                value?.toString() ??
-                                    _selected!.conditions[i].value;
-                          });
+                          _selected!.conditions[i].value = value?.toString() ??
+                              _selected!.conditions[i].value;
                         },
                       )
                     : TextField(
                         controller: _conditionsControllers[i],
                         onChanged: (value) {
-                          setState(
-                            () {
-                              _selected!.conditions[i].value = value;
-                            },
-                          );
+                          _selected!.conditions[i].value = value;
                         },
                       ),
               ),
               IconButton(
                 icon: const Icon(Icons.delete_outline),
                 onPressed: () {
-                  setState(() {
-                    _selected!.conditions.removeAt(i);
-                  });
+                  _selected!.conditions = [
+                    ..._selected!.conditions.sublist(0, i),
+                    ..._selected!.conditions.sublist(i + 1)
+                  ];
                 },
               ),
             ],
@@ -222,19 +207,19 @@ class _RulesViewState extends State<RulesView> {
       CustomViewHeading(
         text: 'Results',
         onAdd: () {
-          setState(() {
-            _selected!.results = [
-              ..._selected!.results,
-              Fact(
-                uuid: const Uuid().v4(),
-                variable: project.variables
-                    .where((element) =>
-                        element.variableType != VariableType.prompted)
-                    .first,
-                value: '',
-              )
-            ];
+          _selected!.results = [
+            ..._selected!.results,
+            Fact(
+              uuid: const Uuid().v4(),
+              variable: project.variables
+                  .where((element) =>
+                      element.variableType != VariableType.prompted)
+                  .first,
+              value: '',
+            )
+          ];
 
+          setState(() {
             _resultsControllers.add(TextEditingController());
           });
         },
@@ -252,24 +237,20 @@ class _RulesViewState extends State<RulesView> {
                       .where((e) => e.variableType == VariableType.inferred)
                       .map((e) => e.name),
                   onCreateNew: (value) {
-                    setState(() {
-                      project.variables = [
-                        ...project.variables,
-                        Variable(
-                          uuid: const Uuid().v4(),
-                          name: value,
-                          description: '',
-                          variableType: VariableType.inferred,
-                          domain: null,
-                        )
-                      ];
-                    });
+                    project.variables = [
+                      ...project.variables,
+                      Variable(
+                        uuid: const Uuid().v4(),
+                        name: value,
+                        description: '',
+                        variableType: VariableType.inferred,
+                        domain: null,
+                      )
+                    ];
                   },
                   onChanged: (value) {
-                    setState(() {
-                      _selected!.results[i].variable =
-                          project.variables.firstWhere((e) => e.name == value);
-                    });
+                    _selected!.results[i].variable =
+                        project.variables.firstWhere((e) => e.name == value);
                   },
                 ),
               ),
@@ -289,29 +270,24 @@ class _RulesViewState extends State<RulesView> {
                           ];
                         },
                         onChanged: (value) {
-                          setState(() {
-                            _selected!.results[i].value = value?.toString() ??
-                                _selected!.results[i].value;
-                          });
+                          _selected!.results[i].value =
+                              value?.toString() ?? _selected!.results[i].value;
                         },
                       )
                     : TextField(
                         controller: _resultsControllers[i],
                         onChanged: (value) {
-                          setState(
-                            () {
-                              _selected!.results[i].value = value;
-                            },
-                          );
+                          _selected!.results[i].value = value;
                         },
                       ),
               ),
               IconButton(
                 icon: const Icon(Icons.delete_outline),
                 onPressed: () {
-                  setState(() {
-                    _selected!.results.removeAt(i);
-                  });
+                  _selected!.results = [
+                    ..._selected!.results.sublist(0, i),
+                    ..._selected!.results.sublist(i + 1)
+                  ];
                 },
               ),
             ],
