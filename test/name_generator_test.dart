@@ -1,6 +1,5 @@
 import 'package:es_shell/utils/name_generator.dart';
-import 'package:flutter_test/flutter_test.dart'
-    show expect, group, test, equals, hasLength;
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('simple project infering', () {
