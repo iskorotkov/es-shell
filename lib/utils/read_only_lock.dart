@@ -1,7 +1,24 @@
 import 'package:flutter/widgets.dart';
 
 class ReadOnlyLock with ChangeNotifier {
-  bool locked;
+  bool _locked;
 
-  ReadOnlyLock(this.locked);
+  ReadOnlyLock(bool locked) : _locked = locked;
+
+  get locked => _locked;
+
+  lock() {
+    _locked = true;
+    notifyListeners();
+  }
+
+  unlock() {
+    _locked = false;
+    notifyListeners();
+  }
+
+  toggle() {
+    _locked = !_locked;
+    notifyListeners();
+  }
 }

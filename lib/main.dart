@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
             actions: [
               IconButton(
                 icon: Icon(_readOnlyLock.locked ? Icons.lock : Icons.lock_open),
-                onPressed: _toggleReadOnly,
+                onPressed: _readOnlyLock.toggle,
               ),
               IconButton(
                 icon: const Icon(Icons.save_alt),
@@ -260,11 +260,5 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-  }
-
-  _toggleReadOnly() {
-    setState(() {
-      _readOnlyLock.locked = !_readOnlyLock.locked;
-    });
   }
 }
