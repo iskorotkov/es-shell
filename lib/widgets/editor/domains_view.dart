@@ -1,12 +1,13 @@
-import 'package:es_shell/widgets/common/reorder_items.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../model/domain.dart';
 import '../../model/project.dart';
+import '../../utils/name_generator.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
+import '../common/reorder_items.dart';
 import 'domain_card.dart';
 
 class DomainsView extends StatefulWidget {
@@ -26,7 +27,7 @@ class _DomainsViewState extends State<DomainsView> {
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
-
+    var nameGenerator = context.read<NameGenerator>();
     return CustomView<Domain>(
       sidebar: _selected != null ? _buildSidebar() : [],
       items: project.domains,
@@ -59,7 +60,8 @@ class _DomainsViewState extends State<DomainsView> {
       onCreate: () {
         var created = Domain(
           uuid: const Uuid().v4(),
-          name: '',
+          name: nameGenerator.generate(
+              'Domain', project.domains.map((e) => e.name).toList()),
           description: '',
           values: const [],
         );

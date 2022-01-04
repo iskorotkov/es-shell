@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:es_shell/utils/name_generator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +55,7 @@ class _HomePageState extends State<HomePage> {
       providers: [
         ChangeNotifierProvider<Project>.value(value: _project),
         ChangeNotifierProvider<ReadOnlyLock>.value(value: widget._readOnlyLock),
+        Provider<NameGenerator>(create: (_) => NameGenerator()),
       ],
       child: DefaultTabController(
         length: 3,

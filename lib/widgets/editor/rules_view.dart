@@ -7,6 +7,7 @@ import '../../model/project.dart';
 import '../../model/rule.dart';
 import '../../model/variable.dart';
 import '../../model/variable_type.dart';
+import '../../utils/name_generator.dart';
 import '../common/custom_autocomplete.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
@@ -31,7 +32,7 @@ class _RulesViewState extends State<RulesView> {
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
-
+    var nameGenerator = context.read<NameGenerator>();
     return CustomView<Rule>(
       sidebar: _selected != null ? _buildSidebar(project) : [],
       items: project.rules,
@@ -76,7 +77,8 @@ class _RulesViewState extends State<RulesView> {
       onCreate: () {
         var created = Rule(
           uuid: const Uuid().v4(),
-          name: '',
+          name: nameGenerator.generate(
+              'Rule', project.rules.map((e) => e.name).toList()),
           description: '',
           conditions: const [],
           results: const [],

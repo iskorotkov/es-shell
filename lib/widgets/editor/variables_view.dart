@@ -6,6 +6,7 @@ import '../../model/domain.dart';
 import '../../model/project.dart';
 import '../../model/variable.dart';
 import '../../model/variable_type.dart';
+import '../../utils/name_generator.dart';
 import '../common/custom_autocomplete.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
@@ -28,7 +29,7 @@ class _VariablesViewState extends State<VariablesView> {
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
-
+    var nameGenerator = context.read<NameGenerator>();
     return CustomView<Variable>(
       sidebar: _selected != null ? _buildSidebar(project) : [],
       items: project.variables,
@@ -49,7 +50,11 @@ class _VariablesViewState extends State<VariablesView> {
       ),
       onCreate: () {
         var created = Variable(
-            uuid: const Uuid().v4(), name: '', description: '', question: '');
+            uuid: const Uuid().v4(),
+            name: nameGenerator.generate(
+                'Variable', project.variables.map((e) => e.name).toList()),
+            description: '',
+            question: '');
 
         if (_selected == null) {
           project.variables = [...project.variables, created];
