@@ -29,6 +29,8 @@ class _InferViewState extends State<InferView> {
   bool _resultSet = false;
   bool _firstRender = true;
   bool _expandStack = true;
+  bool _showVariables = true;
+  bool _showOnlyMatchedRules = true;
 
   @override
   Widget build(BuildContext context) {
@@ -69,65 +71,6 @@ class _InferViewState extends State<InferView> {
     );
   }
 
-  Widget _buildStackTab() {
-    if (_engine.stack != null) {
-      return Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _expandStack = true;
-                      });
-                    },
-                    child: const Text('Expand all'),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _expandStack = false;
-                      });
-                    },
-                    child: const Text('Collapse all'),
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: TreeView(
-                theme: TreeViewTheme(
-                  expanderTheme: const ExpanderThemeData(
-                    type: ExpanderType.chevron,
-                  ),
-                  labelStyle: Theme.of(context).textTheme.bodyText2!,
-                  parentLabelStyle: Theme.of(context).textTheme.bodyText2!,
-                ),
-                controller: TreeViewController(
-                  children: [
-                    _buildStackTree(_engine.stack!, _engine.memory,
-                        expanded: _expandStack)
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return const Center(
-      child: Text('Stack not available'),
-    );
-  }
-
   Widget _buildMemoryTab() {
     return ListView(
       padding: const EdgeInsets.all(8),
@@ -144,6 +87,26 @@ class _InferViewState extends State<InferView> {
             ),
           )
           .toList(),
+    );
+  }
+
+  Node _buildRuleStackNode(StackFrameRule frame, Memory memory) {
+    var variablesNodes =
+        frame.children.map((e) => _buildVariableStackNode(e, memory)).toList();
+
+    var rulesNodes = frame.children
+        .map((element) => element.children)
+        .reduce((l1, l2) => [...l1, ...l2])
+        .map((e) => _buildRuleStackNode(e, memory))
+        .toList();
+
+    return Node(
+      key: frame.rule.uuid,
+      label: _labelForRule(frame, memory),
+      expanded: _expandStack,
+      icon: Icons.rule,
+      iconColor: memory.rules[frame.rule] ?? false ? Colors.green : Colors.red,
+      children: _showVariables ? variablesNodes : rulesNodes,
     );
   }
 
@@ -194,42 +157,133 @@ class _InferViewState extends State<InferView> {
     );
   }
 
-  Node _buildStackTree(StackFrameVariable frame, Memory memory,
-      {bool expanded = true}) {
+  Widget _buildStackTab() {
+    if (_engine.stack != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _expandStack = true;
+                      });
+                    },
+                    child: const Text('Expand all'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _expandStack = false;
+                      });
+                    },
+                    child: const Text('Collapse all'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: LimitedBox(
+                    maxWidth: 200,
+                    child: CheckboxListTile(
+                      title: const Text('Show only matched rules'),
+                      value: _showOnlyMatchedRules,
+                      onChanged: (value) {
+                        setState(() {
+                          _showOnlyMatchedRules =
+                              value ?? _showOnlyMatchedRules;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: LimitedBox(
+                    maxWidth: 200,
+                    child: CheckboxListTile(
+                      title: const Text('Show variables'),
+                      value: _showVariables,
+                      onChanged: (value) {
+                        setState(() {
+                          _showVariables = value ?? _showVariables;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: TreeView(
+                theme: TreeViewTheme(
+                  expanderTheme: const ExpanderThemeData(
+                    type: ExpanderType.chevron,
+                  ),
+                  labelStyle: Theme.of(context).textTheme.bodyText2!,
+                  parentLabelStyle: Theme.of(context).textTheme.bodyText2!,
+                ),
+                controller: TreeViewController(
+                  children: [
+                    _buildVariableStackNode(_engine.stack!, _engine.memory)
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return const Center(
+      child: Text('Stack not available'),
+    );
+  }
+
+  Node _buildVariableStackNode(StackFrameVariable frame, Memory memory) {
+    var rulesNodes = frame.children
+        // Filter out unmatched rules if necessary.
+        .where((element) =>
+            !_showOnlyMatchedRules || (memory.rules[element.rule] ?? false))
+        .map((e) => _buildRuleStackNode(e, memory))
+        .toList();
+
     return Node(
       key: frame.variable.uuid,
-      label: [
-        frame.variable.name,
-        if (memory.variables.containsKey(frame.variable)) ...[
-          ' = ',
-          memory.variables[frame.variable]
-        ],
-        if (frame.fromCache) ' (cached)',
-        if (frame.variable.description.isNotEmpty)
-          ' - ${frame.variable.description}',
-      ].join(),
+      label: _labelForVariable(frame, memory),
       icon: Icons.memory,
-      expanded: expanded,
+      expanded: _expandStack,
       iconColor:
           memory.variables[frame.variable] != null ? Colors.green : Colors.red,
-      children: frame.children
-          .map((e) => Node(
-                key: e.rule.uuid,
-                label: [
-                  (e.rule.name),
-                  memory.rules[e.rule] ?? false ? ' matched' : ' not matched',
-                  if (e.rule.description.isNotEmpty) ' - ${e.rule.description}'
-                ].join(),
-                expanded: expanded,
-                icon: Icons.rule,
-                iconColor:
-                    memory.rules[e.rule] ?? false ? Colors.green : Colors.red,
-                children: e.children
-                    .map((e) => _buildStackTree(e, memory, expanded: expanded))
-                    .toList(),
-              ))
-          .toList(),
+      children: rulesNodes,
     );
+  }
+
+  String _labelForRule(StackFrameRule e, Memory memory) {
+    return [
+      (e.rule.name),
+      memory.rules[e.rule] ?? false ? ' matched' : ' not matched',
+      if (e.rule.description.isNotEmpty) ' - ${e.rule.description}'
+    ].join();
+  }
+
+  String _labelForVariable(StackFrameVariable frame, Memory memory) {
+    return [
+      frame.variable.name,
+      if (memory.variables.containsKey(frame.variable)) ...[
+        ' = ',
+        memory.variables[frame.variable]
+      ],
+      if (frame.fromCache) ' (cached)',
+      if (frame.variable.description.isNotEmpty)
+        ' - ${frame.variable.description}',
+    ].join();
   }
 
   Future<String> _promptUser(variable) {
