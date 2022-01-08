@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:es_shell/utils/name_generator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'model/project.dart';
 import 'sample_project.dart';
+import 'utils/name_generator.dart';
 import 'utils/read_only_lock.dart';
 import 'widgets/editor/domains_view.dart';
 import 'widgets/editor/rules_view.dart';
