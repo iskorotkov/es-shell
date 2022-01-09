@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
               ),
               IconButton(
                 icon: const Icon(Icons.play_arrow),
-                onPressed: () => _infer(context),
+                onPressed: () => _infer(widget.project),
               ),
               const SizedBox(
                 width: 300,
@@ -123,9 +123,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _infer(BuildContext context) {
-    var project = context.watch<Project>();
-
+  _infer(Project project) {
     for (var rule in project.rules) {
       if (rule.name == '') {
         _showErrorDialog('Unnamed rule',
@@ -156,6 +154,14 @@ class _HomePageState extends State<HomePage> {
             'Several variables with the same name "${variable.name}" exist.');
         return;
       }
+    }
+
+    var domainsWithoutValues =
+        project.domains.where((element) => element.values.isEmpty);
+    if (domainsWithoutValues.isNotEmpty) {
+      _showErrorDialog('Domain(s) have no values',
+          'Domain(s) ${domainsWithoutValues.map((e) => '"${e.name}"').join(', ')} have no values in them.');
+      return;
     }
 
     for (var domain in project.domains) {
