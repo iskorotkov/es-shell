@@ -125,12 +125,14 @@ class _DomainsViewState extends State<DomainsView> {
         onChanged: (value) {
           _selected!.name = value;
         },
+        decoration: const InputDecoration(hintText: 'Enter name...'),
       ),
       TextField(
         controller: widget._descriptionController,
         onChanged: (value) {
           _selected!.description = value;
         },
+        decoration: const InputDecoration(hintText: 'Enter description...'),
       ),
       CustomViewHeading(
         text: 'Values',

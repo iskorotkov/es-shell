@@ -137,18 +137,21 @@ class _VariablesViewState extends State<VariablesView> {
         onChanged: (value) {
           _selected!.name = value;
         },
+        decoration: const InputDecoration(hintText: 'Enter name...'),
       ),
       TextField(
         controller: widget.descriptionController,
         onChanged: (value) {
           _selected!.description = value;
         },
+        decoration: const InputDecoration(hintText: 'Enter description...'),
       ),
       TextField(
         controller: widget.questionController,
         onChanged: (value) {
           _selected!.question = value;
         },
+        decoration: const InputDecoration(hintText: 'Enter question...'),
       ),
       const CustomViewHeading(text: 'Type'),
       DropdownButtonFormField<VariableType>(

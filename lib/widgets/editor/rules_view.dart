@@ -115,12 +115,14 @@ class _RulesViewState extends State<RulesView> {
         onChanged: (value) {
           _selected!.name = value;
         },
+        decoration: const InputDecoration(hintText: 'Enter name...'),
       ),
       TextField(
         controller: widget.descriptionController,
         onChanged: (value) {
           _selected!.description = value;
         },
+        decoration: const InputDecoration(hintText: 'Enter description...'),
       ),
       CustomViewHeading(
         text: 'Conditions',
