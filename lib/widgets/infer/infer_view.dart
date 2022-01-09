@@ -29,7 +29,7 @@ class _InferViewState extends State<InferView> {
   bool _resultSet = false;
   bool _firstRender = true;
   bool _expandStack = true;
-  bool _showVariables = true;
+  bool _showVariables = false;
   bool _showOnlyMatchedRules = true;
 
   @override
