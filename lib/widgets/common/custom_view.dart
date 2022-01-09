@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 import '../../utils/read_only_lock.dart';
 import 'reorder_items.dart';
+
+class ScrollState {
+  final int index;
+
+  const ScrollState({required this.index});
+}
 
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
@@ -13,8 +20,9 @@ class CustomView<T> extends StatelessWidget {
   final VoidCallback onCreate;
   final VoidCallback onClose;
   final VoidCallback onDelete;
+  final AutoScrollController controller = AutoScrollController();
 
-  const CustomView({
+  CustomView({
     Key? key,
     required this.sidebar,
     required this.items,
@@ -27,6 +35,13 @@ class CustomView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var readOnlyLock = context.watch<ReadOnlyLock>();
+
+    var scrollState = context.read<ScrollState?>();
+    if (scrollState != null) {
+      controller.scrollToIndex(scrollState.index,
+          preferPosition: AutoScrollPosition.begin);
+    }
+
     return Row(
       children: [
         Expanded(
@@ -35,14 +50,25 @@ class CustomView<T> extends StatelessWidget {
                 ? ListView.builder(
                     itemCount: items.length,
                     padding: const EdgeInsets.all(8),
-                    itemBuilder: (context, index) =>
-                        itemBuilder(context, items[index]),
+                    scrollDirection: Axis.vertical,
+                    controller: controller,
+                    itemBuilder: (context, index) => AutoScrollTag(
+                      key: Key(index.toString()),
+                      controller: controller,
+                      index: index,
+                      child: itemBuilder(context, items[index]),
+                    ),
                   )
                 : ReorderableListView.builder(
                     itemCount: items.length,
                     padding: const EdgeInsets.all(8),
-                    itemBuilder: (context, index) =>
-                        itemBuilder(context, items[index]),
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, index) => AutoScrollTag(
+                      key: Key(index.toString()),
+                      controller: controller,
+                      index: index,
+                      child: itemBuilder(context, items[index]),
+                    ),
                     onReorder: (oldIndex, newIndex) =>
                         reorderItems(items, oldIndex, newIndex),
                   ),

@@ -30,103 +30,114 @@ class _DomainsViewState extends State<DomainsView> {
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
     var nameGenerator = context.read<NameGenerator>();
-
     var tabContext = context.read<TabContext>();
-    if (_firstRender && tabContext.entityGuid != null) {
+
+    var mustScrollToElement = _firstRender && tabContext.entityGuid != null;
+    if (mustScrollToElement) {
       Future.microtask(() {
         setState(() {
-          _select(project.domains
-              .firstWhere((element) => element.uuid == tabContext.entityGuid));
+          var matched = project.domains
+              .where((element) => element.uuid == tabContext.entityGuid);
+          if (matched.isNotEmpty) {
+            _select(matched.first);
+          }
+
           _firstRender = false;
         });
       });
     }
 
-    return CustomView<Domain>(
-      sidebar: _selected != null ? _buildSidebar() : [],
-      items: project.domains,
-      itemBuilder: (_, domain) => ChangeNotifierProvider<Domain>.value(
-        key: Key(domain.uuid),
-        value: domain,
-        child: DomainCard(
-          selected: _selected == domain,
-          onTap: () {
-            setState(() {
-              _select(domain);
+    return Provider<ScrollState?>.value(
+      value: _selected != null
+          ? ScrollState(index: project.domains.indexOf(_selected!))
+          : null,
+      child: CustomView<Domain>(
+        sidebar: _selected != null ? _buildSidebar() : [],
+        items: project.domains,
+        itemBuilder: (_, domain) => ChangeNotifierProvider<Domain>.value(
+          key: Key(domain.uuid),
+          value: domain,
+          child: DomainCard(
+            selected: _selected == domain,
+            onTap: () {
+              setState(() {
+                _select(domain);
 
-              _valuesControllers = List.filled(
-                domain.values.length,
-                TextEditingController(),
-                growable: true,
-              );
+                _valuesControllers = List.filled(
+                  domain.values.length,
+                  TextEditingController(),
+                  growable: true,
+                );
 
-              _valuesControllers.setAll(
-                0,
-                domain.values
-                    .map((e) => TextEditingController()..text = e.toString()),
-              );
-            });
-          },
+                _valuesControllers.setAll(
+                  0,
+                  domain.values
+                      .map((e) => TextEditingController()..text = e.toString()),
+                );
+              });
+            },
+          ),
         ),
-      ),
-      onCreate: () {
-        var created = Domain(
-          uuid: const Uuid().v4(),
-          name: nameGenerator.generate(
-              'Domain', project.domains.map((e) => e.name).toList()),
-          description: '',
-          values: const [],
-        );
-
-        if (_selected == null) {
-          project.domains = [...project.domains, created];
-        } else {
-          var index = project.domains.indexOf(_selected!);
-          project.domains = [
-            ...project.domains.sublist(0, index + 1),
-            created,
-            ...project.domains.sublist(index + 1)
-          ];
-        }
-      },
-      onDelete: () {
-        var variablesWithDomain =
-            project.variables.where((e) => e.domain == _selected);
-        if (variablesWithDomain.isNotEmpty) {
-          var names = variablesWithDomain.map((e) => '"${e.name}"').join(', ');
-
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Can\'t delete domain'),
-              content: Text(
-                  'Domain "${_selected!.name}" is used in variable${variablesWithDomain.length == 1 ? '' : 's'} $names'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
+        onCreate: () {
+          var created = Domain(
+            uuid: const Uuid().v4(),
+            name: nameGenerator.generate(
+                'Domain', project.domains.map((e) => e.name).toList()),
+            description: '',
+            values: const [],
           );
 
-          return;
-        }
+          if (_selected == null) {
+            project.domains = [...project.domains, created];
+          } else {
+            var index = project.domains.indexOf(_selected!);
+            project.domains = [
+              ...project.domains.sublist(0, index + 1),
+              created,
+              ...project.domains.sublist(index + 1)
+            ];
+          }
+        },
+        onDelete: () {
+          var variablesWithDomain =
+              project.variables.where((e) => e.domain == _selected);
+          if (variablesWithDomain.isNotEmpty) {
+            var names =
+                variablesWithDomain.map((e) => '"${e.name}"').join(', ');
 
-        project.domains =
-            project.domains.where((element) => element != _selected).toList();
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Can\'t delete domain'),
+                content: Text(
+                    'Domain "${_selected!.name}" is used in variable${variablesWithDomain.length == 1 ? '' : 's'} $names'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
 
-        setState(() {
-          _selected = null;
-        });
-      },
-      onClose: () {
-        setState(() {
-          _selected = null;
-        });
-      },
+            return;
+          }
+
+          project.domains =
+              project.domains.where((element) => element != _selected).toList();
+
+          setState(() {
+            _selected = null;
+          });
+        },
+        onClose: () {
+          setState(() {
+            _selected = null;
+          });
+        },
+      ),
     );
   }
 

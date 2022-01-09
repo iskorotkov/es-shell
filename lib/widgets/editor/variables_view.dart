@@ -33,112 +33,123 @@ class _VariablesViewState extends State<VariablesView> {
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
     var nameGenerator = context.read<NameGenerator>();
-
     var tabContext = context.read<TabContext>();
-    if (_firstRender && tabContext.entityGuid != null) {
+
+    var mustScrollToElement = _firstRender && tabContext.entityGuid != null;
+    if (mustScrollToElement) {
       Future.microtask(() {
         setState(() {
-          _select(project.variables
-              .firstWhere((element) => element.uuid == tabContext.entityGuid));
+          var matched = project.variables
+              .where((element) => element.uuid == tabContext.entityGuid);
+          if (matched.isNotEmpty) {
+            _select(matched.first);
+          }
+
           _firstRender = false;
         });
       });
     }
 
-    return CustomView<Variable>(
-      sidebar: _selected != null ? _buildSidebar(project) : [],
-      items: project.variables,
-      itemBuilder: (_, variable) => ChangeNotifierProvider<Variable>.value(
-        key: Key(variable.uuid),
-        value: variable,
-        child: VariableCard(
-          selected: _selected == variable,
-          onTap: () {
-            setState(() {
-              _select(variable);
-            });
-          },
+    return Provider<ScrollState?>.value(
+      value: _selected != null
+          ? ScrollState(index: project.variables.indexOf(_selected!))
+          : null,
+      child: CustomView<Variable>(
+        sidebar: _selected != null ? _buildSidebar(project) : [],
+        items: project.variables,
+        itemBuilder: (_, variable) => ChangeNotifierProvider<Variable>.value(
+          key: Key(variable.uuid),
+          value: variable,
+          child: VariableCard(
+            selected: _selected == variable,
+            onTap: () {
+              setState(() {
+                _select(variable);
+              });
+            },
+          ),
         ),
+        onCreate: () {
+          var created = Variable(
+              uuid: const Uuid().v4(),
+              name: nameGenerator.generate(
+                  'Variable', project.variables.map((e) => e.name).toList()),
+              description: '',
+              question: '');
+
+          if (_selected == null) {
+            project.variables = [...project.variables, created];
+          } else {
+            var index = project.variables.indexOf(_selected!);
+            project.variables = [
+              ...project.variables.sublist(0, index + 1),
+              created,
+              ...project.variables.sublist(index + 1)
+            ];
+          }
+        },
+        onDelete: () {
+          var rulesWithVariable = project.rules.where((e) =>
+              e.results.map((e) => e.variable).contains(_selected) ||
+              e.conditions.map((e) => e.variable).contains(_selected));
+          if (rulesWithVariable.isNotEmpty) {
+            var names = rulesWithVariable.map((e) => '"${e.name}"').join(', ');
+
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Can\'t delete variable'),
+                content: Text(
+                    'Variable "${_selected!.name}" is used in rule${rulesWithVariable.length == 1 ? '' : 's'} $names'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
+
+            return;
+          }
+
+          if (project.target == _selected) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Can\'t delete variable'),
+                content: Text(
+                    'Variable "${_selected!.name}" is used as a target variable'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
+
+            return;
+          }
+
+          project.variables = project.variables
+              .where((element) => element != _selected)
+              .toList();
+
+          setState(() {
+            _selected = null;
+          });
+        },
+        onClose: () {
+          setState(() {
+            _selected = null;
+          });
+        },
       ),
-      onCreate: () {
-        var created = Variable(
-            uuid: const Uuid().v4(),
-            name: nameGenerator.generate(
-                'Variable', project.variables.map((e) => e.name).toList()),
-            description: '',
-            question: '');
-
-        if (_selected == null) {
-          project.variables = [...project.variables, created];
-        } else {
-          var index = project.variables.indexOf(_selected!);
-          project.variables = [
-            ...project.variables.sublist(0, index + 1),
-            created,
-            ...project.variables.sublist(index + 1)
-          ];
-        }
-      },
-      onDelete: () {
-        var rulesWithVariable = project.rules.where((e) =>
-            e.results.map((e) => e.variable).contains(_selected) ||
-            e.conditions.map((e) => e.variable).contains(_selected));
-        if (rulesWithVariable.isNotEmpty) {
-          var names = rulesWithVariable.map((e) => '"${e.name}"').join(', ');
-
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Can\'t delete variable'),
-              content: Text(
-                  'Variable "${_selected!.name}" is used in rule${rulesWithVariable.length == 1 ? '' : 's'} $names'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          );
-
-          return;
-        }
-
-        if (project.target == _selected) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Can\'t delete variable'),
-              content: Text(
-                  'Variable "${_selected!.name}" is used as a target variable'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Close'),
-                ),
-              ],
-            ),
-          );
-
-          return;
-        }
-
-        project.variables =
-            project.variables.where((element) => element != _selected).toList();
-
-        setState(() {
-          _selected = null;
-        });
-      },
-      onClose: () {
-        setState(() {
-          _selected = null;
-        });
-      },
     );
   }
 
