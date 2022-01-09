@@ -118,6 +118,43 @@ class _DomainsViewState extends State<DomainsView> {
     );
   }
 
+  Widget _buildDomainValue(int index) {
+    return Row(
+      key: Key(index.toString()),
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _valuesControllers[index],
+            onChanged: (value) {
+              _selected!.values = _selected!.values
+                  .map((e) => e == _selected!.values[index] ? value : e)
+                  .toList();
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
+          child: IconButton(
+            icon: const Icon(Icons.delete_outline),
+            onPressed: () {
+              _selected!.values = [
+                ..._selected!.values.sublist(0, index),
+                ..._selected!.values.sublist(index + 1)
+              ];
+
+              setState(() {
+                _valuesControllers = [
+                  ..._valuesControllers.sublist(0, index),
+                  ..._valuesControllers.sublist(index + 1)
+                ];
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   List<Widget> _buildSidebar() {
     return [
       TextField(
@@ -134,52 +171,25 @@ class _DomainsViewState extends State<DomainsView> {
         },
         decoration: const InputDecoration(hintText: 'Enter description...'),
       ),
-      CustomViewHeading(
-        text: 'Values',
-        onAdd: () {
-          _selected!.values = [..._selected!.values, ''];
-          setState(() {
-            _valuesControllers.add(TextEditingController());
-          });
-        },
-      ),
+      Builder(builder: (context) {
+        return CustomViewHeading(
+          text: 'Values',
+          onAdd: () {
+            var nameGenerator = context.read<NameGenerator>();
+            var name = nameGenerator.generate(
+                'Value', _valuesControllers.map((e) => e.text).toList());
+
+            _selected!.values = [..._selected!.values, name];
+            setState(() {
+              _valuesControllers.add(TextEditingController()..text = name);
+            });
+          },
+        );
+      }),
       ReorderableListView.builder(
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          return Row(
-            key: Key(index.toString()),
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _valuesControllers[index],
-                  onChanged: (value) {
-                    _selected!.values = _selected!.values
-                        .map((e) => e == _selected!.values[index] ? value : e)
-                        .toList();
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
-                child: IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  onPressed: () {
-                    _selected!.values = [
-                      ..._selected!.values.sublist(0, index),
-                      ..._selected!.values.sublist(index + 1)
-                    ];
-
-                    setState(() {
-                      _valuesControllers = [
-                        ..._valuesControllers.sublist(0, index),
-                        ..._valuesControllers.sublist(index + 1)
-                      ];
-                    });
-                  },
-                ),
-              ),
-            ],
-          );
+          return _buildDomainValue(index);
         },
         itemCount: _selected!.values.length,
         onReorder: (oldIndex, newIndex) {

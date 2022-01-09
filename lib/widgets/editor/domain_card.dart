@@ -22,7 +22,7 @@ class DomainCard extends StatelessWidget {
       firstColumnChildren: [
         const Text('VALUES'),
         const SizedBox(height: 4),
-        Text(domain.values.join("; ")),
+        Text(domain.values.map((e) => '"$e"').join(", ")),
       ],
       onTap: onTap,
     );

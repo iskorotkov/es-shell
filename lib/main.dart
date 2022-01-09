@@ -160,6 +160,22 @@ class _HomePageState extends State<HomePage> {
             'Several domains with the same name "${domain.name}" exist.');
         return;
       }
+
+      var values = <String, int>{};
+      for (var element in domain.values) {
+        var curValue = values[element] ?? 0;
+        values[element] = curValue + 1;
+      }
+
+      var duplicatedValues = values.entries
+          .where((element) => element.value > 1)
+          .map((e) => e.key)
+          .toList();
+      if (duplicatedValues.isNotEmpty) {
+        _showErrorDialog('Domain has duplicated items',
+            'Domain "${domain.name}" has duplicated value(s): ${duplicatedValues.map((e) => '"$e"').join(', ')}.');
+        return;
+      }
     }
 
     log('running infer engine');
