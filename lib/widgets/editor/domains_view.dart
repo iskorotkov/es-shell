@@ -104,7 +104,7 @@ class _DomainsViewState extends State<DomainsView> {
         }
 
         project.domains =
-            project.domains.where((element) => element == _selected).toList();
+            project.domains.where((element) => element != _selected).toList();
 
         setState(() {
           _selected = null;
@@ -168,6 +168,13 @@ class _DomainsViewState extends State<DomainsView> {
                       ..._selected!.values.sublist(0, index),
                       ..._selected!.values.sublist(index + 1)
                     ];
+
+                    setState(() {
+                      _valuesControllers = [
+                        ..._valuesControllers.sublist(0, index),
+                        ..._valuesControllers.sublist(index + 1)
+                      ];
+                    });
                   },
                 ),
               ),
