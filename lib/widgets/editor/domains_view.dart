@@ -8,6 +8,7 @@ import '../../utils/name_generator.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
 import '../common/reorder_items.dart';
+import '../homepage.dart';
 import 'domain_card.dart';
 
 class DomainsView extends StatefulWidget {
@@ -23,11 +24,24 @@ class DomainsView extends StatefulWidget {
 class _DomainsViewState extends State<DomainsView> {
   Domain? _selected;
   List<TextEditingController> _valuesControllers = <TextEditingController>[];
+  bool _firstRender = true;
 
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
     var nameGenerator = context.read<NameGenerator>();
+
+    var tabContext = context.read<TabContext>();
+    if (_firstRender && tabContext.entityGuid != null) {
+      Future.microtask(() {
+        setState(() {
+          _select(project.domains
+              .firstWhere((element) => element.uuid == tabContext.entityGuid));
+          _firstRender = false;
+        });
+      });
+    }
+
     return CustomView<Domain>(
       sidebar: _selected != null ? _buildSidebar() : [],
       items: project.domains,
@@ -38,9 +52,7 @@ class _DomainsViewState extends State<DomainsView> {
           selected: _selected == domain,
           onTap: () {
             setState(() {
-              _selected = domain;
-              widget._nameController.text = domain.name;
-              widget._descriptionController.text = domain.description;
+              _select(domain);
 
               _valuesControllers = List.filled(
                 domain.values.length,
@@ -116,6 +128,12 @@ class _DomainsViewState extends State<DomainsView> {
         });
       },
     );
+  }
+
+  void _select(Domain domain) {
+    _selected = domain;
+    widget._nameController.text = domain.name;
+    widget._descriptionController.text = domain.description;
   }
 
   Widget _buildDomainValue(int index) {

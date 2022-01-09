@@ -7,9 +7,11 @@ import '../../model/project.dart';
 import '../../model/variable.dart';
 import '../../model/variable_type.dart';
 import '../../utils/name_generator.dart';
+import '../../utils/read_only_lock.dart';
 import '../common/custom_autocomplete.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
+import '../homepage.dart';
 import 'variable_card.dart';
 
 class VariablesView extends StatefulWidget {
@@ -25,11 +27,24 @@ class VariablesView extends StatefulWidget {
 
 class _VariablesViewState extends State<VariablesView> {
   Variable? _selected;
+  bool _firstRender = true;
 
   @override
   Widget build(BuildContext context) {
     var project = context.watch<Project>();
     var nameGenerator = context.read<NameGenerator>();
+
+    var tabContext = context.read<TabContext>();
+    if (_firstRender && tabContext.entityGuid != null) {
+      Future.microtask(() {
+        setState(() {
+          _select(project.variables
+              .firstWhere((element) => element.uuid == tabContext.entityGuid));
+          _firstRender = false;
+        });
+      });
+    }
+
     return CustomView<Variable>(
       sidebar: _selected != null ? _buildSidebar(project) : [],
       items: project.variables,
@@ -40,10 +55,7 @@ class _VariablesViewState extends State<VariablesView> {
           selected: _selected == variable,
           onTap: () {
             setState(() {
-              _selected = variable;
-              widget.nameController.text = variable.name;
-              widget.descriptionController.text = variable.description;
-              widget.questionController.text = variable.question ?? '';
+              _select(variable);
             });
           },
         ),
@@ -167,27 +179,47 @@ class _VariablesViewState extends State<VariablesView> {
             .toList(),
       ),
       const CustomViewHeading(text: 'Domain'),
-      CustomAutocomplete(
-        value: _selected!.domain?.name,
-        items: project.domains.map((e) => e.name),
-        optional: true,
-        onCreateNew: (value) {
-          project.domains = [
-            ...project.domains,
-            Domain(
+      Builder(builder: (context) {
+        var readOnlyLock = context.read<ReadOnlyLock>();
+        return CustomAutocomplete(
+          value: _selected!.domain?.name,
+          items: project.domains.map((e) => e.name),
+          optional: true,
+          onCreateNew: (value) {
+            var created = Domain(
               uuid: const Uuid().v4(),
               name: value,
               description: '',
               values: const [],
-            )
-          ];
-        },
-        onChanged: (value) {
-          _selected!.domain = value == null
-              ? null
-              : project.domains.firstWhere((e) => e.name == value);
-        },
-      ),
+            );
+
+            project.domains = [...project.domains, created];
+
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => HomePage(
+                tabContext: TabContext(
+                  tabIndex: 2,
+                  entityUuid: created.uuid,
+                ),
+                project: project,
+                readOnlyLock: readOnlyLock,
+              ),
+            ));
+          },
+          onChanged: (value) {
+            _selected!.domain = value == null
+                ? null
+                : project.domains.firstWhere((e) => e.name == value);
+          },
+        );
+      }),
     ];
+  }
+
+  void _select(Variable variable) {
+    _selected = variable;
+    widget.nameController.text = variable.name;
+    widget.descriptionController.text = variable.description;
+    widget.questionController.text = variable.question ?? '';
   }
 }

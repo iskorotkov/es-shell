@@ -15,7 +15,7 @@ class VariableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var variable = context.watch<Variable>();
-
+    var domainValues = variable.domain?.values.map((e) => '"$e"').join(", ");
     return CustomCard(
       title: variable.name,
       description: variable.description,
@@ -30,7 +30,7 @@ class VariableCard extends StatelessWidget {
         const Text('DOMAIN'),
         const SizedBox(height: 4),
         Text(variable.domain != null
-            ? '${variable.domain!.name} (${variable.domain!.values.join("; ")})'
+            ? '${variable.domain!.name} ($domainValues)'
             : '-'),
       ],
       onTap: onTap,

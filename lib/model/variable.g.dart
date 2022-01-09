@@ -10,7 +10,7 @@ Variable _$VariableFromJson(Map<String, dynamic> json) => Variable(
       uuid: json['uuid'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      question: json['question'] as String,
+      question: json['question'] as String?,
       variableType:
           $enumDecodeNullable(_$VariableTypeEnumMap, json['variableType']) ??
               VariableType.inferred,

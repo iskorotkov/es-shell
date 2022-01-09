@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../sample_project.dart';
+import '../utils/read_only_lock.dart';
 import 'homepage.dart';
 
 class App extends StatelessWidget {
@@ -12,7 +14,11 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(title: 'ES Shell'),
+      home: HomePage(
+        project: createSampleProject(),
+        tabContext: TabContext(),
+        readOnlyLock: ReadOnlyLock(true),
+      ),
       debugShowCheckedModeBanner: false,
     );
   }

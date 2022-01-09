@@ -8,9 +8,11 @@ import '../../model/rule.dart';
 import '../../model/variable.dart';
 import '../../model/variable_type.dart';
 import '../../utils/name_generator.dart';
+import '../../utils/read_only_lock.dart';
 import '../common/custom_autocomplete.dart';
 import '../common/custom_view.dart';
 import '../common/custom_view_heading.dart';
+import '../homepage.dart';
 import 'rule_card.dart';
 
 class RulesView extends StatefulWidget {
@@ -148,26 +150,39 @@ class _RulesViewState extends State<RulesView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: CustomAutocomplete(
-                  value: _selected!.conditions[i].variable.name,
-                  items: project.variables.map((e) => e.name),
-                  onCreateNew: (value) {
-                    project.variables = [
-                      ...project.variables,
-                      Variable(
+                child: Builder(builder: (context) {
+                  var readOnlyLock = context.read<ReadOnlyLock>();
+                  return CustomAutocomplete(
+                    value: _selected!.conditions[i].variable.name,
+                    items: project.variables.map((e) => e.name),
+                    onCreateNew: (value) {
+                      var created = Variable(
                         uuid: const Uuid().v4(),
                         name: value,
                         description: '',
                         variableType: VariableType.inferred,
                         domain: null,
-                      )
-                    ];
-                  },
-                  onChanged: (value) {
-                    _selected!.conditions[i].variable =
-                        project.variables.firstWhere((e) => e.name == value);
-                  },
-                ),
+                      );
+
+                      project.variables = [...project.variables, created];
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => HomePage(
+                          tabContext: TabContext(
+                            tabIndex: 1,
+                            entityUuid: created.uuid,
+                          ),
+                          project: project,
+                          readOnlyLock: readOnlyLock,
+                        ),
+                      ));
+                    },
+                    onChanged: (value) {
+                      _selected!.conditions[i].variable =
+                          project.variables.firstWhere((e) => e.name == value);
+                    },
+                  );
+                }),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),
@@ -235,28 +250,41 @@ class _RulesViewState extends State<RulesView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: CustomAutocomplete(
-                  value: _selected!.results[i].variable.name,
-                  items: project.variables
-                      .where((e) => e.variableType == VariableType.inferred)
-                      .map((e) => e.name),
-                  onCreateNew: (value) {
-                    project.variables = [
-                      ...project.variables,
-                      Variable(
+                child: Builder(builder: (context) {
+                  var readOnlyLock = context.read<ReadOnlyLock>();
+                  return CustomAutocomplete(
+                    value: _selected!.results[i].variable.name,
+                    items: project.variables
+                        .where((e) => e.variableType == VariableType.inferred)
+                        .map((e) => e.name),
+                    onCreateNew: (value) {
+                      var created = Variable(
                         uuid: const Uuid().v4(),
                         name: value,
                         description: '',
                         variableType: VariableType.inferred,
                         domain: null,
-                      )
-                    ];
-                  },
-                  onChanged: (value) {
-                    _selected!.results[i].variable =
-                        project.variables.firstWhere((e) => e.name == value);
-                  },
-                ),
+                      );
+
+                      project.variables = [...project.variables, created];
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => HomePage(
+                          tabContext: TabContext(
+                            tabIndex: 1,
+                            entityUuid: created.uuid,
+                          ),
+                          project: project,
+                          readOnlyLock: readOnlyLock,
+                        ),
+                      ));
+                    },
+                    onChanged: (value) {
+                      _selected!.results[i].variable =
+                          project.variables.firstWhere((e) => e.name == value);
+                    },
+                  );
+                }),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8),

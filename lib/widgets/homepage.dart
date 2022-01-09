@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../model/project.dart';
-import '../sample_project.dart';
 import '../utils/name_generator.dart';
 import '../utils/read_only_lock.dart';
 import 'editor/domains_view.dart';
@@ -16,28 +15,58 @@ import 'editor/target_variable_selector.dart';
 import 'editor/variables_view.dart';
 import 'infer/infer_view.dart';
 
-class HomePage extends StatefulWidget {
-  final String title;
-  final ReadOnlyLock _readOnlyLock = ReadOnlyLock(true);
+class TabContext with ChangeNotifier {
+  int _tabIndex;
+  String? _entityGuid;
 
-  HomePage({Key? key, required this.title}) : super(key: key);
+  TabContext({int tabIndex = 0, String? entityUuid})
+      : _tabIndex = tabIndex,
+        _entityGuid = entityUuid;
+
+  String? get entityGuid => _entityGuid;
+
+  set entityGuid(String? entityGuid) {
+    _entityGuid = entityGuid;
+    notifyListeners();
+  }
+
+  int get tabIndex => _tabIndex;
+
+  set tabIndex(int tabIndex) {
+    _tabIndex = tabIndex;
+    notifyListeners();
+  }
+}
+
+class HomePage extends StatefulWidget {
+  final String title = 'ES Shell';
+  final TabContext tabContext;
+  final Project project;
+  final ReadOnlyLock readOnlyLock;
+
+  const HomePage({
+    Key? key,
+    required this.tabContext,
+    required this.project,
+    required this.readOnlyLock,
+  }) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  Project _project = createSampleProject();
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<Project>.value(value: _project),
-        ChangeNotifierProvider<ReadOnlyLock>.value(value: widget._readOnlyLock),
+        ChangeNotifierProvider<Project>.value(value: widget.project),
+        ChangeNotifierProvider<ReadOnlyLock>.value(value: widget.readOnlyLock),
+        ChangeNotifierProvider<TabContext>.value(value: widget.tabContext),
         Provider<NameGenerator>(create: (_) => NameGenerator()),
       ],
       child: DefaultTabController(
+        initialIndex: widget.tabContext.tabIndex,
         length: 3,
         child: Scaffold(
           appBar: AppBar(
@@ -61,11 +90,13 @@ class _HomePageState extends State<HomePage> {
               }),
               IconButton(
                 icon: const Icon(Icons.file_download),
-                onPressed: _saveProject,
+                onPressed: () {
+                  _saveProject(widget.project);
+                },
               ),
               IconButton(
                 icon: const Icon(Icons.file_upload),
-                onPressed: _loadProject,
+                onPressed: () => _loadProject(context),
               ),
               IconButton(
                 icon: const Icon(Icons.play_arrow),
@@ -93,14 +124,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   _infer(BuildContext context) {
-    for (var rule in _project.rules) {
+    var project = context.watch<Project>();
+
+    for (var rule in project.rules) {
       if (rule.name == '') {
         _showErrorDialog('Unnamed rule',
             'Rule doesn\'t have a name. Set the name or delete the rule before proceeding.');
         return;
       }
 
-      if (_project.rules.where((element) => element.name == rule.name).length !=
+      if (project.rules.where((element) => element.name == rule.name).length !=
           1) {
         _showErrorDialog('Duplicated rule name',
             'Several rules with the same name "${rule.name}" exist.');
@@ -108,14 +141,14 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
-    for (var variable in _project.variables) {
+    for (var variable in project.variables) {
       if (variable.name == '') {
         _showErrorDialog('Unnamed variable',
             'Variable doesn\'t have a name. Set the name or delete the variable before proceeding.');
         return;
       }
 
-      if (_project.variables
+      if (project.variables
               .where((element) => element.name == variable.name)
               .length !=
           1) {
@@ -125,14 +158,14 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
-    for (var domain in _project.domains) {
+    for (var domain in project.domains) {
       if (domain.name == '') {
         _showErrorDialog('Unnamed domain',
             'Domain doesn\'t have a name. Set the name or delete the domain before proceeding.');
         return;
       }
 
-      if (_project.domains
+      if (project.domains
               .where((element) => element.name == domain.name)
               .length !=
           1) {
@@ -163,14 +196,14 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(context, MaterialPageRoute<void>(
       builder: (context) {
         return ChangeNotifierProvider<Project>.value(
-          value: _project,
+          value: project,
           child: const InferView(),
         );
       },
     ));
   }
 
-  _loadProject() {
+  _loadProject(BuildContext context) {
     FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['es', 'json'],
@@ -210,9 +243,15 @@ class _HomePageState extends State<HomePage> {
             loaded.target = loaded.variables
                 .firstWhere((e) => e.uuid == loaded.target.uuid);
 
-            setState(() {
-              _project = loaded;
-            });
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => HomePage(
+                tabContext: widget.tabContext,
+                project: loaded,
+                readOnlyLock: widget.readOnlyLock,
+              ),
+            ));
+
+            log('loaded project from file');
           } catch (e) {
             log('error decoding project: $e');
           }
@@ -223,7 +262,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  _saveProject() {
+  _saveProject(Project project) {
     FilePicker.platform.saveFile(
       fileName: 'project.es',
       type: FileType.custom,
@@ -238,7 +277,7 @@ class _HomePageState extends State<HomePage> {
 
       try {
         var file = File(value);
-        var json = jsonEncode(_project.toJson());
+        var json = jsonEncode(project.toJson());
 
         file.writeAsString(json);
       } catch (e) {
