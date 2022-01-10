@@ -47,15 +47,18 @@ class CustomCard extends StatelessWidget {
                       title,
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
+                    const SizedBox(height: 8),
                     Text(
                       description,
                       style: Theme.of(context).textTheme.caption,
                     ),
-                    if (question != null)
+                    if (question != null) ...[
+                      const SizedBox(height: 8),
                       Text(
                         question!,
                         style: Theme.of(context).textTheme.caption,
-                      ),
+                      )
+                    ],
                   ],
                 ),
               ),
