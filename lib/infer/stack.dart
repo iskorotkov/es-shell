@@ -11,7 +11,8 @@ class StackFrameVariable {
 
 class StackFrameRule {
   final Rule rule;
+  bool matched;
   final children = <StackFrameVariable>[];
 
-  StackFrameRule({required this.rule});
+  StackFrameRule({required this.rule, required this.matched});
 }

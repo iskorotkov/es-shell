@@ -105,7 +105,7 @@ class _InferViewState extends State<InferView> {
       label: _labelForRule(frame, memory),
       expanded: _expandStack,
       icon: Icons.rule,
-      iconColor: memory.rules[frame.rule] ?? false ? Colors.green : Colors.red,
+      iconColor: frame.matched ? Colors.green : Colors.red,
       children: _showVariables ? variablesNodes : rulesNodes,
     );
   }
@@ -249,8 +249,7 @@ class _InferViewState extends State<InferView> {
   Node _buildVariableStackNode(StackFrameVariable frame, Memory memory) {
     var rulesNodes = frame.children
         // Filter out unmatched rules if necessary.
-        .where((element) =>
-            !_showOnlyMatchedRules || (memory.rules[element.rule] ?? false))
+        .where((element) => !_showOnlyMatchedRules || element.matched)
         .map((e) => _buildRuleStackNode(e, memory))
         .toList();
 
@@ -267,8 +266,8 @@ class _InferViewState extends State<InferView> {
 
   String _labelForRule(StackFrameRule e, Memory memory) {
     return [
-      (e.rule.name),
-      memory.rules[e.rule] ?? false ? ' matched' : ' not matched',
+      e.rule.name,
+      e.matched ? ' matched' : ' not matched',
       if (e.rule.description.isNotEmpty) ' - ${e.rule.description}'
     ].join();
   }

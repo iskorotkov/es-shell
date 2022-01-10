@@ -27,11 +27,7 @@ class Engine {
 
     ruleLoop:
     for (var rule in rules) {
-      if (memory.rules.containsKey(rule)) {
-        continue;
-      }
-
-      var ruleFrame = StackFrameRule(rule: rule);
+      var ruleFrame = StackFrameRule(rule: rule, matched: false);
       stack.children.add(ruleFrame);
 
       log('took rule $rule');
@@ -48,23 +44,23 @@ class Engine {
           log('getting value from cache');
           variableFrame.fromCache = true;
         } else if (condition.variable.variableType == VariableType.inferred) {
-          log('inferring variable from rules');
-          await _infer(project, prompt, condition.variable, variableFrame);
+              log('inferring variable from rules');
+              await _infer(project, prompt, condition.variable, variableFrame);
         } else if (condition.variable.variableType == VariableType.prompted) {
-          log('asking user for value');
+              log('asking user for value');
           var value = await prompt(condition.variable);
           memory.variables[condition.variable] = value;
         }
 
         if (condition.value != memory.variables[condition.variable]) {
           log('rule rejected');
-          memory.rules[rule] = false;
+          ruleFrame.matched = false;
           continue ruleLoop;
         }
       }
 
       log('rule matched');
-      memory.rules[rule] = true;
+      ruleFrame.matched = true;
 
       for (var result in rule.results) {
         log('setting value of variable ${result.variable}');
