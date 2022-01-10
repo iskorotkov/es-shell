@@ -267,21 +267,21 @@ class _InferViewState extends State<InferView> {
   String _labelForRule(StackFrameRule e, Memory memory) {
     return [
       e.rule.name,
-      e.matched ? ' matched' : ' not matched',
-      if (e.rule.description.isNotEmpty) ' - ${e.rule.description}'
+      if (e.rule.description.isNotEmpty) ' (${e.rule.description})',
+      e.matched ? ' - matched' : ' - not matched',
     ].join();
   }
 
   String _labelForVariable(StackFrameVariable frame, Memory memory) {
     return [
       frame.variable.name,
+      if (frame.variable.description.isNotEmpty)
+        ' (${frame.variable.description})',
       if (memory.variables.containsKey(frame.variable)) ...[
         ' = ',
         memory.variables[frame.variable]
       ],
       if (frame.fromCache) ' (cached)',
-      if (frame.variable.description.isNotEmpty)
-        ' - ${frame.variable.description}',
     ].join();
   }
 
