@@ -17,6 +17,7 @@ class ClosedQuestionCard extends QuestionCard {
 class _ClosedQuestionCardState extends State<ClosedQuestionCard> {
   @override
   Widget build(BuildContext context) {
+    var values = widget.question.variable.domain!.values;
     return Card(
       elevation: 8,
       child: Padding(
@@ -27,33 +28,34 @@ class _ClosedQuestionCardState extends State<ClosedQuestionCard> {
               child: Text(widget.question.variable.questionOrDefault()),
             ),
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: widget.question.variable.domain!.values.map((e) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                    child: ElevatedButton(
-                      autofocus:
-                          e == widget.question.variable.domain!.values[0],
-                      style: ElevatedButton.styleFrom(
-                        onSurface: widget.question.value == e
-                            ? Colors.green
-                            : Colors.red,
-                      ),
-                      onPressed: !widget.question.answered
-                          ? () {
-                              log('selected option $e');
-                              widget.question.confirmAnswer(e);
-                            }
-                          : null,
-                      child: Text(e.toString()),
-                    ),
-                  );
-                }).toList(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: values.map((e) => _buildValueButton(e)).toList(),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildValueButton(String value) {
+    var isFirst = value == widget.question.variable.domain!.values[0];
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+      child: ElevatedButton(
+        autofocus: isFirst,
+        style: ElevatedButton.styleFrom(
+          onSurface: widget.question.value == value ? Colors.green : Colors.red,
+        ),
+        onPressed: !widget.question.answered
+            ? () {
+                log('selected option $value');
+                widget.question.confirmAnswer(value);
+              }
+            : null,
+        child: Text(value.toString()),
       ),
     );
   }
