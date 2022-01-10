@@ -8,17 +8,24 @@ import 'stack.dart';
 
 typedef PromptVariableCallback = Future<String> Function(Variable variable);
 
+typedef ShowMessageCallback = Future<void> Function(String message);
+
 class Engine {
   Memory memory = Memory();
   StackFrameVariable? stack;
 
-  Future<String?> infer(Project project, PromptVariableCallback prompt) async {
+  Future<String?> infer(Project project, PromptVariableCallback prompt,
+      [ShowMessageCallback? showMessage]) async {
     stack = StackFrameVariable(variable: project.target, fromCache: false);
-    await _infer(project, prompt, project.target, stack!);
+    await _infer(project, prompt, showMessage, project.target, stack!);
     return memory.variables[project.target];
   }
 
-  _infer(Project project, PromptVariableCallback prompt, Variable target,
+  _infer(
+      Project project,
+      PromptVariableCallback prompt,
+      ShowMessageCallback? showMessage,
+      Variable target,
       StackFrameVariable stack) async {
     var rules = project.rules
         .where((rule) => rule.results.any((res) => res.variable == target));
@@ -43,13 +50,57 @@ class Engine {
         if (memory.variables.containsKey(condition.variable)) {
           log('getting value from cache');
           variableFrame.fromCache = true;
-        } else if (condition.variable.variableType == VariableType.inferred) {
+        } else {
+          switch (condition.variable.variableType) {
+            case VariableType.inferred:
               log('inferring variable from rules');
-              await _infer(project, prompt, condition.variable, variableFrame);
-        } else if (condition.variable.variableType == VariableType.prompted) {
+              await _infer(project, prompt, showMessage, condition.variable,
+                  variableFrame);
+              break;
+            case VariableType.prompted:
               log('asking user for value');
-          var value = await prompt(condition.variable);
-          memory.variables[condition.variable] = value;
+              memory.variables[condition.variable] =
+                  await prompt(condition.variable);
+              break;
+            case VariableType.inferredThenPrompted:
+              log('infer, then ask user');
+              // infer.
+              await _infer(project, prompt, showMessage, condition.variable,
+                  variableFrame);
+              var inferredValue = memory.variables[condition.variable];
+              // prompt.
+              var promptedValue = await prompt(condition.variable);
+              // compare values.
+              if (inferredValue != null && inferredValue != promptedValue) {
+                log('inferred "$inferredValue" and prompted "$promptedValue" values for don\'t match');
+                showMessage?.call(
+                    'Inferred "$inferredValue" and prompted "$promptedValue" values for don\'t match');
+              }
+              // set value.
+              memory.variables[condition.variable] = promptedValue;
+              break;
+            case VariableType.promptedThenInferred:
+              log('ask user, then infer');
+              // prompt.
+              var promptedValue = await prompt(condition.variable);
+              // infer.
+              await _infer(project, prompt, showMessage, condition.variable,
+                  variableFrame);
+              var inferredValue = memory.variables[condition.variable];
+              // compare values.
+              if (inferredValue != null && inferredValue != promptedValue) {
+                log('inferred "$inferredValue" and prompted "$promptedValue" values don\'t match');
+                showMessage?.call(
+                    'Inferred "$inferredValue" and prompted "$promptedValue" values don\'t match');
+              }
+              // set value.
+              memory.variables[condition.variable] =
+                  inferredValue ?? promptedValue;
+              break;
+            default:
+              throw Exception(
+                  'unknown variable type ${condition.variable.variableType}');
+          }
         }
 
         if (condition.value != memory.variables[condition.variable]) {

@@ -255,7 +255,7 @@ class _RulesViewState extends State<RulesView> {
                   return CustomAutocomplete(
                     value: _selected!.results[i].variable.name,
                     items: project.variables
-                        .where((e) => e.variableType == VariableType.inferred)
+                        .where((e) => e.variableType != VariableType.prompted)
                         .map((e) => e.name),
                     onCreateNew: (value) {
                       var created = Variable(

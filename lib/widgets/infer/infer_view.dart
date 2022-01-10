@@ -38,7 +38,8 @@ class _InferViewState extends State<InferView> {
 
     if (_firstRender) {
       _firstRender = false;
-      var result = _engine.infer(project, _promptUser);
+      var result = _engine.infer(
+          project, _promptUser, (message) => _showMessage(context, message));
       result.then((result) {
         log('result is $result');
         setState(() {
@@ -296,5 +297,13 @@ class _InferViewState extends State<InferView> {
     });
 
     return completer.future;
+  }
+
+  Future<void> _showMessage(BuildContext context, String message) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
   }
 }
