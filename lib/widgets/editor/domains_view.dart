@@ -52,7 +52,7 @@ class _DomainsViewState extends State<DomainsView> {
           ? ScrollState(index: project.domains.indexOf(_selected!))
           : null,
       child: CustomView<Domain>(
-        sidebar: _selected != null ? _buildSidebar() : [],
+        sidebar: _selected != null ? _buildSidebar(project) : [],
         items: project.domains,
         itemBuilder: (_, domain) => ChangeNotifierProvider<Domain>.value(
           key: Key(domain.uuid),
@@ -147,7 +147,7 @@ class _DomainsViewState extends State<DomainsView> {
     widget._descriptionController.text = domain.description;
   }
 
-  Widget _buildDomainValue(int index) {
+  Widget _buildDomainValue(Project project, int index) {
     return Row(
       key: Key(index.toString()),
       children: [
@@ -166,6 +166,35 @@ class _DomainsViewState extends State<DomainsView> {
           child: IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: () {
+              var curValue = _selected!.values[index];
+              var rulesWithValue = project.rules.where((element) =>
+                  element.conditions
+                      .any((element) => element.value == curValue) ||
+                  element.results.any((element) => element.value == curValue));
+
+              if (rulesWithValue.isNotEmpty) {
+                var joinedRuleNames =
+                    rulesWithValue.map((e) => '"${e.name}"').join(", ");
+
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Can\'t delete domain'),
+                    content: Text(
+                        'Domain value "$curValue" is used in rule${rulesWithValue.length == 1 ? '' : 's'} $joinedRuleNames'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  ),
+                );
+                return;
+              }
+
               _selected!.values = [
                 ..._selected!.values.sublist(0, index),
                 ..._selected!.values.sublist(index + 1)
@@ -184,7 +213,7 @@ class _DomainsViewState extends State<DomainsView> {
     );
   }
 
-  List<Widget> _buildSidebar() {
+  List<Widget> _buildSidebar(Project project) {
     return [
       TextField(
         controller: widget._nameController,
@@ -218,7 +247,7 @@ class _DomainsViewState extends State<DomainsView> {
       ReorderableListView.builder(
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          return _buildDomainValue(index);
+          return _buildDomainValue(project, index);
         },
         itemCount: _selected!.values.length,
         onReorder: (oldIndex, newIndex) {
