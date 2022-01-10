@@ -38,9 +38,7 @@ class Variable with ChangeNotifier {
     notifyListeners();
   }
 
-  String questionOrDefault() {
-    return question ?? '$name?';
-  }
+  String questionOrDefault() => question ?? '$name?';
 
   Domain? get domain => _domain;
 

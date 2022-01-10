@@ -71,11 +71,12 @@ class _VariablesViewState extends State<VariablesView> {
         ),
         onCreate: () {
           var created = Variable(
-              uuid: const Uuid().v4(),
-              name: nameGenerator.generate(
-                  'Variable', project.variables.map((e) => e.name).toList()),
-              description: '',
-              question: '');
+            uuid: const Uuid().v4(),
+            name: nameGenerator.generate(
+                'Variable', project.variables.map((e) => e.name).toList()),
+            description: '',
+            question: '',
+          );
 
           if (_selected == null) {
             project.variables = [...project.variables, created];
@@ -169,18 +170,22 @@ class _VariablesViewState extends State<VariablesView> {
         },
         decoration: const InputDecoration(hintText: 'Enter description...'),
       ),
-      TextField(
-        controller: widget.questionController,
-        onChanged: (value) {
-          _selected!.question = value;
-        },
-        decoration: const InputDecoration(hintText: 'Enter question...'),
-      ),
+      if (_selected!.variableType != VariableType.inferred)
+        TextField(
+          controller: widget.questionController,
+          onChanged: (value) {
+            _selected!.question = value;
+          },
+          decoration: const InputDecoration(hintText: 'Enter question...'),
+        ),
       const CustomViewHeading(text: 'Type'),
       DropdownButtonFormField<VariableType>(
         value: _selected!.variableType,
         onChanged: (value) {
-          _selected!.variableType = value ?? _selected!.variableType;
+          setState(() {
+            // Some fields are dependent on variable type.
+            _selected!.variableType = value ?? _selected!.variableType;
+          });
         },
         items: VariableType.values
             .map((e) => DropdownMenuItem(

@@ -19,7 +19,9 @@ class VariableCard extends StatelessWidget {
     return CustomCard(
       title: variable.name,
       description: variable.description,
-      question: variable.questionOrDefault(),
+      question: variable.variableType != VariableType.inferred
+          ? variable.questionOrDefault()
+          : null,
       selected: selected,
       firstColumnChildren: [
         const Text('TYPE'),
