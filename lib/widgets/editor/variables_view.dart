@@ -160,6 +160,7 @@ class _VariablesViewState extends State<VariablesView> {
         controller: widget.nameController,
         onChanged: (value) {
           _selected!.name = value;
+          project.forceRebuild();
         },
         decoration: const InputDecoration(hintText: 'Enter name...'),
       ),
@@ -167,6 +168,7 @@ class _VariablesViewState extends State<VariablesView> {
         controller: widget.descriptionController,
         onChanged: (value) {
           _selected!.description = value;
+          project.forceRebuild();
         },
         decoration: const InputDecoration(hintText: 'Enter description...'),
       ),
@@ -175,6 +177,7 @@ class _VariablesViewState extends State<VariablesView> {
           controller: widget.questionController,
           onChanged: (value) {
             _selected!.question = value;
+            project.forceRebuild();
           },
           decoration: const InputDecoration(hintText: 'Enter question...'),
         ),
@@ -186,6 +189,8 @@ class _VariablesViewState extends State<VariablesView> {
             // Some fields are dependent on variable type.
             _selected!.variableType = value ?? _selected!.variableType;
           });
+
+          project.forceRebuild();
         },
         items: VariableType.values
             .map((e) => DropdownMenuItem(
@@ -226,6 +231,7 @@ class _VariablesViewState extends State<VariablesView> {
             _selected!.domain = value == null
                 ? null
                 : project.domains.firstWhere((e) => e.name == value);
+            project.forceRebuild();
           },
         );
       }),

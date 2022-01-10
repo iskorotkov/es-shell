@@ -57,6 +57,11 @@ class Project with ChangeNotifier {
     notifyListeners();
   }
 
+  void forceRebuild() {
+    // TODO: Scary hack to fix some values on UI not being updated after changes.
+    notifyListeners();
+  }
+
   Map<String, dynamic> toJson() => _$ProjectToJson(this);
 
   @override

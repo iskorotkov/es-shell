@@ -116,6 +116,7 @@ class _RulesViewState extends State<RulesView> {
         controller: widget.nameController,
         onChanged: (value) {
           _selected!.name = value;
+          project.forceRebuild();
         },
         decoration: const InputDecoration(hintText: 'Enter name...'),
       ),
@@ -123,6 +124,7 @@ class _RulesViewState extends State<RulesView> {
         controller: widget.descriptionController,
         onChanged: (value) {
           _selected!.description = value;
+          project.forceRebuild();
         },
         decoration: const InputDecoration(hintText: 'Enter description...'),
       ),
@@ -180,6 +182,7 @@ class _RulesViewState extends State<RulesView> {
                     onChanged: (value) {
                       _selected!.conditions[i].variable =
                           project.variables.firstWhere((e) => e.name == value);
+                      project.forceRebuild();
                     },
                   );
                 }),
@@ -202,6 +205,7 @@ class _RulesViewState extends State<RulesView> {
                         onChanged: (value) {
                           _selected!.conditions[i].value = value?.toString() ??
                               _selected!.conditions[i].value;
+                          project.forceRebuild();
                         },
                       )
                     : TextField(
@@ -282,6 +286,7 @@ class _RulesViewState extends State<RulesView> {
                     onChanged: (value) {
                       _selected!.results[i].variable =
                           project.variables.firstWhere((e) => e.name == value);
+                      project.forceRebuild();
                     },
                   );
                 }),
@@ -304,12 +309,14 @@ class _RulesViewState extends State<RulesView> {
                         onChanged: (value) {
                           _selected!.results[i].value =
                               value?.toString() ?? _selected!.results[i].value;
+                          project.forceRebuild();
                         },
                       )
                     : TextField(
                         controller: _resultsControllers[i],
                         onChanged: (value) {
                           _selected!.results[i].value = value;
+                          project.forceRebuild();
                         },
                       ),
               ),

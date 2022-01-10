@@ -219,6 +219,7 @@ class _DomainsViewState extends State<DomainsView> {
         controller: widget._nameController,
         onChanged: (value) {
           _selected!.name = value;
+          project.forceRebuild();
         },
         decoration: const InputDecoration(hintText: 'Enter name...'),
       ),
@@ -226,6 +227,7 @@ class _DomainsViewState extends State<DomainsView> {
         controller: widget._descriptionController,
         onChanged: (value) {
           _selected!.description = value;
+          project.forceRebuild();
         },
         decoration: const InputDecoration(hintText: 'Enter description...'),
       ),
